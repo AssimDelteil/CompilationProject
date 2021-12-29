@@ -1,55 +1,57 @@
 type file =
-    |File of (declaration list)*(instruction list)
+    |File of (decla list)*(instr list)
 
-type mode = (*On définit un type pour chaque élément optionnel de déclaration*)
-| Null
-| in
-| out
-| in_out
+(*Cf discord pour les modifs a faire*)
+type decla =
+    |Objet of notnull_string_list * bool * (ada_type option) * (def option)
+    |Type of string * string * expr * expr * string
+    |Sous_type of string * string * string * ada_type * string
+    |Rename of notnull_string_list * ada_type * string * string 
+    |Procedure of string * parametre
+    |Ada_function of string * parametre * ada_type
+    |Procedure of procedure * string * decla list * string * instr list * string * (string option)
+    |Function of ada_function * string * decla list * string * instr list * string * (string option)
+
+(*On définit un type pour chaque élément optionnel de déclaration*)
+type mode = 
+    |Null
+    |In
+    |Out
+    |In_out
 
 type parametre =
-| Null
-| par of notnull_string_list * mode * ada_type * parametre
+    |Null
+    |Par of notnull_string_list * mode * ada_type * parametre
 
 type notnull_string_list =
-| Fin of string
-| List of string * notnull_string_list
+    |Fin of string
+    |List of string * notnull_string_list
 
 type ada_type =
-| Boolean
-| Integer
-| Float
-| Character
+    |Boolean
+    |Integer
+    |Float
+    |Character
 
-type declaration =
-| decl_objet of notnull_string_list * bool * (ada_type option) * (def option)
-| decl_type of string * string * expr * expr * string
-| decl_sous_type of string * string * string * ada_type * string
-| rename of notnull_string_list * ada_type * string * string 
-| procedure of string * parametre
-| ada_function of string * parametre * ada_type
-| decl_procedure of procedure * string * declaration list * string * instruction list * string * (string option)
-| decl_function of ada_function * string * declaration list * string * instruction list * string * (string option)
-
-type instruction = 
-    (*Met un (string option)* au début de chaque instruction pour la potentielle étiquette : 
-    "Une instruction est une séquence potentiellement vide d’étiquettes constituées chacune
+type instr = 
+    (*Met un (string option)* au début de chaque instr pour la potentielle étiquette : 
+    "Une instr est une séquence potentiellement vide d’étiquettes constituées chacune
     d’un identifiant entre << et >>, suivie de :"
     A chaque fois que besoin de identifiant: met string *)
     |Null (string option)
     |Affect of (string option)*string*expr
     |Proc of (string option)*string*(expr list) (*Procédure d'appel*)
     (*B = Boucle*)
-    |BSimple of (string option)*(string option)*(instruction list)*(string option)
-    |BTantQue of (string option)*(string option)*expr*(instruction list)*(string option)
+    |BSimple of (string option)*(string option)*(instr list)*(string option)
+    |BTantQue of (string option)*(string option)*expr*(instr list)*(string option)
     (*3ème string option pour le reverse
     Utilise bPT_... pour représenter "soit de deux expressions séparées par
     .., soit d’un type" *)
-    |BPourTout of (string option)*(string option)*string*(string option)*bPT_type_ou_expr*(instruction list)*(string option)
+    |BPourTout of (string option)*(string option)*string*(string option)*bPT_type_ou_expr*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
-    |If of (string option)*expr*(instruction list)* ((expr*(instruction list)) list) *((instruction list) option)
-    (*3ème terme est liste d'alternative, composée de liste de choix et d'instructions*)
-    |Case of (string option)*expr*( ((case_choix list)*instruction list) list) 
+    |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
+    (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
+    |Case of (string option)*expr*( ((case_choix list)*instr list) list) 
     |Goto of (string option)*string
     |Exit (string option)*(string option)*(expr option)
     (*Retour de procédure et de fonction*)
