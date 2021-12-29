@@ -1,7 +1,35 @@
 type file =
     |File of (declaration list)*(instruction list)
 
-type declaration = 
+type mode = (*On définit un type pour chaque élément optionnel de déclaration*)
+| Null
+| in
+| out
+| in_out
+
+type parametre =
+| Null
+| par of notnull_string_list * mode * ada_type * parametre
+
+type notnull_string_list =
+| Fin of string
+| List of string * notnull_string_list
+
+type ada_type =
+| Boolean
+| Integer
+| Float
+| Character
+
+type declaration =
+| decl_objet of notnull_string_list * bool * (ada_type option) * (def option)
+| decl_type of string * string * expr * expr * string
+| decl_sous_type of string * string * string * ada_type * string
+| rename of notnull_string_list * ada_type * string * string 
+| procedure of string * parametre
+| ada_function of string * parametre * ada_type
+| decl_procedure of procedure * string * declaration list * string * instruction list * string * (string option)
+| decl_function of ada_function * string * declaration list * string * instruction list * string * (string option)
 
 type instruction = 
     (*Met un (string option)* au début de chaque instruction pour la potentielle étiquette : 
