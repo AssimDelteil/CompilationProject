@@ -26,9 +26,9 @@ type declaration =
 | decl_sous_type of string * string * string * ada_type * string
 | rename of notnull_string_list * ada_type * string * string 
 | procedure of string * parametre
-| function of string * parametre * ada_type
+| ada_function of string * parametre * ada_type
 | decl_procedure of procedure * string * declaration list * string * instruction list * string * (string option)
-| decl_function of function * string * declaration list * string * instruction list * string * (string option)
+| decl_function of ada_function * string * declaration list * string * instruction list * string * (string option)
 
 type instruction = 
 
