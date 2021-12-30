@@ -18,7 +18,9 @@
 
 %%
 
-s: e {$1}
+s:
+    |e {$1}
+    |i {$1}
 
 e:
     |e PLUS e { Plus($1,$3) }
@@ -46,6 +48,11 @@ e:
     |CST_INT { Cst($1) }
     |CST_FLOAT { Cst($1) }
     |ID { Id($1) }
+
+
+
+
+
     
     
 
