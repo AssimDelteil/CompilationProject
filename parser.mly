@@ -1,12 +1,13 @@
 %{
   open File
 %}
-%token PLUS MOINS FOIS DIV PUISS EQ NEQ LESSE GREATE LESST GREATT MOD REM AND OR XOR THEN ELSE ABS NOT LPAR RPAR /*Token terminaux sans type*/
+/*Token terminaux sans type*/
+%token MOD REM AND OR XOR ABS NOT THEN ELSE LOOP END WHILE FOR REVERSE IN IF ELSIF ELSE CASE WHEN OTHERS GOTO EXIT RETURN RANGE INTEGER BOOLEAN CONSTANT TYPE IS SUBTYPE RENAMES PROCEDURE OUT FUNCTION BEGIN NULL NEQ LESSE DEB_ETIQ FIN_ETIQ PUISS GREATE AFFECT FLECHE PP COMM PLUS MOINS DIV FOIS EQ LESST GREATT LPAR RPAR VIR PVIR P DP SEP EOL CST_INT CST_FLOAT ID
 %token <float> CST_FLOAT
 %token <int> CST_INT
 %token <string> ID
 %start s
-%type <File.expr> s
+%type <File.ast> s
 
 %left AND OR XOR AND THEN OR ELSE
 %left EQ NEQ LESSE LESST GREATE GREATT
@@ -18,9 +19,8 @@
 
 %%
 
-s:
-    |e {$1}
-    |i {$1}
+
+s: e {$1}
 
 e:
     |e PLUS e { Plus($1,$3) }
@@ -45,8 +45,8 @@ e:
     |MOINS e { Nega($2) }
     |ABS e { Abs($2) }
     |LPAR NOT e RPAR { Not($3) }
-    |CST_INT { Cst($1) }
-    |CST_FLOAT { Cst($1) }
+    |CST_INT { Int($1) }
+    |CST_FLOAT { Float($1) }
     |ID { Id($1) }
 
 

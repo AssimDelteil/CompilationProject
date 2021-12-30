@@ -67,7 +67,6 @@ rule decoupe = parse
   |'|' {SEP}
   |'\n' {EOL}
   |[' ''\t']+ {decoupe lexbuf}
-  /* Reconnais entier basique et float basique et id basique, pas le truc compliqué*/
   |['0'-'9']+ as i {CST_INT (int_of_string i)}
-  |['0'-'9']+(.['0'-'9']+)?(['e'|'E']['0'-'9']+)? as f {CST_FLOAT (float_of_string f)}
+  |['0'-'9']+('.'['0'-'9']+)?(['e''E']['0'-'9']+)? as f {CST_FLOAT (float_of_string f)}
   |['a'-'z''A'-'Z''_']['a'-'z''A'-'Z''_''0'-'9']* as s {ID s}
