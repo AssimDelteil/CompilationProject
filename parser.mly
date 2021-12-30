@@ -2,7 +2,8 @@
   open File
 %}
 %token PLUS MOINS FOIS DIV PUISS EQ NEQ LESSE GREATE LESST GREATT MOD REM AND OR XOR THEN ELSE ABS NOT LPAR RPAR /*Token terminaux sans type*/
-%token <float> CST
+%token <float> CST_FLOAT
+%token <int> CST_INT
 %token <string> ID
 %start s
 %type <File.expr> s
@@ -42,5 +43,9 @@ e:
     |MOINS e { Nega($2) }
     |ABS e { Abs($2) }
     |LPAR NOT e RPAR { Not($3) }
+    |CST_INT { Cst($1) }
+    |CST_FLOAT { Cst($1) }
+    |ID { Id($1) }
+    
     
 
