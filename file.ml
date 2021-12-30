@@ -18,9 +18,120 @@ type ast =
     |Int of int
     |Float of float
     |String of string 
-    |Id of string 
 
-val affiche : ast -> unit
+let print_sep l =
+  List.iter print_string l
+
+let rec print_sep_spec = function
+  | [] -> ()
+  | [x] -> print_string "|-"
+  | x :: q -> print_string x; print_sep_spec q
+    
+let rec aff_aux l a =
+  print_sep_spec l;
+  match a with
+    |Plus(a1, a2) ->
+        print_string "Plus\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Moins(a1, a2) ->
+        print_string "Moins\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Fois(a1, a2) ->
+        print_string "Fois\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Div(a1, a2) ->
+        print_string "Div\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Puiss(a1, a2) ->
+        print_string "Puiss\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Eq(a1, a2) ->
+        print_string "Eq\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Neq(a1, a2) ->
+        print_string "Neq\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |LessE(a1, a2) ->
+        print_string "LessE\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |LessT(a1, a2) ->
+        print_string "LessT\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |GreatE(a1, a2) ->
+        print_string "GreatE\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |GreatT(a1, a2) ->
+        print_string "GreatT\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Mod(a1, a2) ->
+        print_string "Mod\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Rem(a1, a2) ->
+        print_string "Rem\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |And(a1, a2) ->
+        print_string "And\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Or(a1, a2) ->
+        print_string "Or\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Xor(a1, a2) ->
+        print_string "Xor\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Int i -> Printf.printf "Cte(%i)\n" i
+    |Float f -> Printf.printf "Cte(%f)\n" f
+    |String s -> Printf.printf "Id(%s)\n" s
+    |Id s -> Printf.printf "Id(%s)\n" s
+
+let affiche = aff_aux []
 
 type file =
     |File of (decla list)*(instr list)

@@ -56,7 +56,7 @@ rule decoupe = parse
   |'/' {DIV}
   |'*' {FOIS}
   |'=' {EQ}
-  |'<' {LESS}
+  |'<' {LESST}
   |'>' {GREATT}
   |'(' {LPAR}
   |')' {RPAR}
