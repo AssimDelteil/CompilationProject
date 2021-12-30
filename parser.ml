@@ -463,14 +463,14 @@ let yyact = [|
     let _1 = (Parsing.peek_val __caml_parser_env 0 : int) in
     Obj.repr(
 # 46 "parser.mly"
-             ( Cst(_1) )
+             ( Int(_1) )
 # 468 "parser.ml"
                : 'e))
 ; (fun __caml_parser_env ->
     let _1 = (Parsing.peek_val __caml_parser_env 0 : float) in
     Obj.repr(
 # 47 "parser.mly"
-               ( Cst(_1) )
+               ( Float(_1) )
 # 475 "parser.ml"
                : 'e))
 ; (fun __caml_parser_env ->

@@ -15,6 +15,11 @@ type ast =
     |And of ast*ast
     |Or of ast*ast
     |Xor of ast*ast
+    |AndThen of ast*ast
+    |OrElse of ast*ast
+    |Not of ast
+    |Abs of ast 
+    |Nega of ast
     |Int of int
     |Float of float
     |Id of string 
@@ -126,6 +131,30 @@ let rec aff_aux l a =
         aff_aux (l @ ["| "]) a1;
         print_sep (l @ ["|\n"]);
         aff_aux (l @ ["  "]) a2
+    |AndThen(a1, a2) ->
+        print_string "Xor\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |OrElse(a1, a2) ->
+        print_string "Xor\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a1;
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["  "]) a2
+    |Not (a) ->        
+        print_string "Not\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a;
+    |Abs (a) ->        
+        print_string "Abs\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a;
+    |Nega (a) ->        
+        print_string "Nega\n";
+        print_sep (l @ ["|\n"]);
+        aff_aux (l @ ["| "]) a;
     |Int i -> Printf.printf "Cte(%i)\n" i
     |Float f -> Printf.printf "Cte(%f)\n" f
     |Id s -> Printf.printf "Id(%s)\n" s

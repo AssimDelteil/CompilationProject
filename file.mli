@@ -15,6 +15,11 @@ type ast =
     |And of ast*ast
     |Or of ast*ast
     |Xor of ast*ast
+    |AndThen of ast*ast
+    |OrElse of ast*ast
+    |Not of ast
+    |Abs of ast 
+    |Nega of ast
     |Int of int
     |Float of float
     |Id of string 
