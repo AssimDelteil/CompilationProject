@@ -42,12 +42,12 @@ type instr =
     |Affect of (string option)*string*expr
     |Proc of (string option)*string*(expr list) (*Procédure d'appel*)
     (*B = Boucle*)
-    |BSimple of (string option)*(string option)*(instr list)*(string option)
-    |BTantQue of (string option)*(string option)*expr*(instr list)*(string option)
+    |Loop of (string option)*(string option)*(instr list)*(string option)
+    |While of (string option)*(string option)*expr*(instr list)*(string option)
     (*3ème string option pour le reverse
     Utilise bPT_... pour représenter "soit de deux expressions séparées par
     .., soit d’un type" *)
-    |BPourTout of (string option)*(string option)*string*(string option)*bPT_type_ou_expr*(instr list)*(string option)
+    |For of (string option)*(string option)*string*(string option)*bPT_type_ou_expr*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
     |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
