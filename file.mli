@@ -56,11 +56,13 @@ type notnull_string_list = (*ce type sert à spécifier que la liste est non vid
     |Fin of string
     |List of string * notnull_string_list
 
-type 'a ada_type =
+type ada_type =
     |Boolean of bool
     |Integer of int
     |Float of float
     |Character of char
+
+type range = int list
 
 type instr = 
     (*Met un (string option)* au début de chaque instr pour la potentielle étiquette : 
