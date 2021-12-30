@@ -3,14 +3,19 @@ type file =
 
 (*Cf discord pour les modifs a faire*)
 type decla =
-    |Objet of notnull_string_list * bool * (ada_type option) * (def option)
-    |Type of string * string * expr * expr * string
+    |Objet of notnull_string_list * bool * (ada_type option) * (def option) (*bool est true si il y a constant, false sinon*)
+    |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
     |Sous_type of string * string * string * ada_type * string
-    |Rename of notnull_string_list * ada_type * string * string 
-    |Procedure of string * parametre
+    |Rename of notnull_string_list * ada_type * string
+    |Procedure of string * parametre 
     |Function of string * parametre * ada_type
+
+(*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
+
     |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)
+(*Le premier terme est une decla avec l'attribut Procedure*)
     |DefFunction of decla * string * (decla list) * string * instr list * string * (string option)
+(*Le premier terme est une decla avec l'attribut Function*)
 
 (*On définit un type pour chaque élément optionnel de déclaration*)
 type mode = 
@@ -23,7 +28,7 @@ type parametre =
     |Null
     |Par of notnull_string_list * mode * ada_type * parametre
 
-type notnull_string_list =
+type notnull_string_list = (*ce type sert à spécifier que la liste est non vide*)
     |Fin of string
     |List of string * notnull_string_list
 
@@ -32,7 +37,7 @@ type ada_type =
     |Integer of int
     |Float of float
     |Character of char
-    |Range of 
+    |Range of 'a list
 
 type instr = 
     (*Met un (string option)* au début de chaque instr pour la potentielle étiquette : 
