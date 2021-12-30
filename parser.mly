@@ -1,12 +1,12 @@
 %{
   open File
 %}
-%token PLUS MOINS FOIS DIV PUISS EQ NEQ LESSE GREATE LESST GREATT MOD REM AND OR XOR THEN ELSE ABS NOT LPAR RPAR /*Token terminaux sans type*/
+%token PLUS MOINS FOIS DIV PUISS EQ NEQ LESSE GREATE LESST GREATT MOD REM AND OR XOR THEN ELSE ABS NOT LPAR RPAR EOL/*Token terminaux sans type*/
 %token <float> CST_FLOAT
 %token <int> CST_INT
 %token <string> ID
 %start s
-%type <File.expr> s
+%type <File.ast> s
 
 %left AND OR XOR AND THEN OR ELSE
 %left EQ NEQ LESSE LESST GREATE GREATT
@@ -18,7 +18,7 @@
 
 %%
 
-s: e {$1}
+s: e EOL {$1}
 
 e:
     |e PLUS e { Plus($1,$3) }

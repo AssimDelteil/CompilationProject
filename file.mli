@@ -21,40 +21,44 @@ type ast =
 
 val affiche : ast -> unit
 
-type notnull_string_list = (*ce type sert à spécifier que la liste est non vide*)
-    |Fin of string
-    |List of string * notnull_string_list
-
+(*Type auxillière contenant les types de base en Litle Ada*)
 type ada_type =
     |Boolean of bool
     |Integer of int
     |Float of float
     |String of string
 
-(*On définit un type pour chaque élément optionnel de déclaration*)
-type mode = 
-    |Null
-    |In
-    |Out
-    |In_out
+(*Type expression demandé*)
+type expr = 
+    |Plus of expr*expr
+    |Moins of expr*expr
+    |Fois of expr*expr
+    |Div of expr*expr
+    |Puiss of expr*expr
+    |Eq of expr*expr
+    |Neq of expr*expr
+    |LessE of expr*expr
+    |LessT of expr*expr
+    |GreatE of expr*expr
+    |GreatT of expr*expr
+    |Mod of expr*expr
+    |Rem of expr*expr
+    |And of expr*expr
+    |Or of expr*expr
+    |Xor of expr*expr
 
-type parametre =
-    |Null
-    |Par of notnull_string_list * mode * ada_type * parametre
+    |Id of string 
+    |Cst of ada_type 
 
-type decla =
-    |Objet of notnull_string_list * bool * (ada_type option) * (def option) (*bool est true si il y a constant, false sinon*)
-    |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
-    |Sous_type of string * string * string * ada_type * string
-    |Rename of notnull_string_list * ada_type * string
-    |Procedure of string * parametre 
-    |Function of string * parametre * ada_type
-(*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
-    (*Le premier terme est une decla avec l'attribut Procedure*)
-    |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)
-    (*Le premier terme est une decla avec l'attribut Function*)
-    |DefFunction of decla * string * (decla list) * string * instr list * string * (string option)
+    |Nega of expr
+    |Abs of expr
+    |Not of expr 
 
+    |AndThen of expr*expr
+    |OrElse of expr*expr
+
+    |ConvOuAppelFct of string*(expr list) 
+    |Paren of expr
 
 type range = int list
 
@@ -99,36 +103,34 @@ type instr =
     |ReturnProc of (string option)
     |ReturnFct of (string option)*expr
 
-type expr = 
-    |Plus of expr*expr
-    |Moins of expr*expr
-    |Fois of expr*expr
-    |Div of expr*expr
-    |Puiss of expr*expr
-    |Eq of expr*expr
-    |Neq of expr*expr
-    |LessE of expr*expr
-    |LessT of expr*expr
-    |GreatE of expr*expr
-    |GreatT of expr*expr
-    |Mod of expr*expr
-    |Rem of expr*expr
-    |And of expr*expr
-    |Or of expr*expr
-    |Xor of expr*expr
+type notnull_string_list = (*ce type sert à spécifier que la liste est non vide*)
+    |Fin of string
+    |List of string * notnull_string_list
 
-    |Id of string 
-    |Cst of ada_type 
+(*On définit un type pour chaque élément optionnel de déclaration*)
+type mode = 
+    |Null
+    |In
+    |Out
+    |In_out
 
-    |Nega of expr
-    |Abs of expr
-    |Not of expr 
+type parametre =
+    |Null
+    |Par of notnull_string_list * mode * ada_type * parametre
 
-    |AndThen of expr*expr
-    |OrElse of expr*expr
+type decla =
+    |Objet of notnull_string_list * bool * (ada_type option) * (expr option) (*bool est true si il y a constant, false sinon*)
+    |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
+    |Sous_type of string * string * string * ada_type * string
+    |Rename of notnull_string_list * ada_type * string
+    |Procedure of string * parametre 
+    |Function of string * parametre * ada_type
+(*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
+    (*Le premier terme est une decla avec l'attribut Procedure*)
+    |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)
+    (*Le premier terme est une decla avec l'attribut Function*)
+    |DefFunction of decla * string * (decla list) * string * instr list * string * (string option)
 
-    |ConvOuAppelFct of string*(expr list) 
-    |Paren of expr
 
 
 type file =
