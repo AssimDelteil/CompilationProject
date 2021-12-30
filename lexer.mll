@@ -4,17 +4,6 @@
 }
 
 rule decoupe = parse 
-  |'+' {PLUS}
-  |'-' {MOINS}
-  |"**" {PUISS}
-  |'/' {DIV}
-  |'*' {FOIS}
-  |'=' {EQ}
-  |"!=" {NEQ}
-  |"<=" {LESSE}
-  |'<' {LESS}
-  |">=" {GREATE}
-  |'>' {GREATT}
   |"mod" {MOD}
   |"rem" {REM}
   |"and" {AND}
@@ -24,30 +13,17 @@ rule decoupe = parse
   |"not" {NOT}
   |"then" {THEN}
   |"else" {ELSE}
-  |"<<" {DEB_ETIQ}
-  |">>" {FIN_ETIQ}
-  |"null" {NULL}
-  |":=" {AFFECT}  
-  |'(' {LPAR}
-  |')' {RPAR}
-  |',' {VIR}
-  |';' {PVIR}
-  |'.' {P}
-  |':' {DP} 
   |"loop" {LOOP}
   |"end" {END}
   |"while" {WHILE} 
   |"for" {FOR}
   |"reverse" {REVERSE}
   |"in" {IN}
-  |".." {PP}
   |"if" {IF}
   |"elsif" {ELSIF}
   |"else" {ELSE}
   |"case" {CASE}
   |"when" {WHEN}
-  |'|' {SEP}
-  |"=>" {FLECHE}
   |"others" {OTHERS}
   |"goto" {GOTO}
   |"exit" {EXIT}
@@ -64,8 +40,34 @@ rule decoupe = parse
   |"out" {OUT}
   |"function" {FUNCTION}  
   |"begin" {BEGIN}
+  |"null" {NULL}
+  |"!=" {NEQ}
+  |"<=" {LESSE}
+  |"<<" {DEB_ETIQ}
+  |">>" {FIN_ETIQ}
+  |"**" {PUISS}
+  |">=" {GREATE}
+  |":=" {AFFECT}  
+  |"=>" {FLECHE}
+  |".." {PP}
+  |"--" {COMM}
+  |'+' {PLUS}
+  |'-' {MOINS}
+  |'/' {DIV}
+  |'*' {FOIS}
+  |'=' {EQ}
+  |'<' {LESS}
+  |'>' {GREATT}
+  |'(' {LPAR}
+  |')' {RPAR}
+  |',' {VIR}
+  |';' {PVIR}
+  |'.' {P}
+  |':' {DP} 
+  |'|' {SEP}
   |'\n' {EOL}
   |[' ''\t']+ {decoupe lexbuf}
-  |"--" {COMM}
-  |['0'-'9']+ as i {CST (int_of_string i)}
-  |['0'-'9']+(.['0'-'9']*)?['e'|'E']['0'-'9']]?
+  /* Reconnais entier basique et float basique et id basique, pas le truc compliqué*/
+  |['0'-'9']+ as i {CST_INT (int_of_string i)}
+  |['0'-'9']+(.['0'-'9']+)?(['e'|'E']['0'-'9']+)? as f {CST_FLOAT (float_of_string f)}
+  |['a'-'z''A'-'Z''_']['a'-'z''A'-'Z''_''0'-'9']* as s {ID s}
