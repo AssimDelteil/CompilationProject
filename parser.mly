@@ -24,10 +24,10 @@ s: e EOL {$1}
 e:
     |e PLUS e { Plus($1,$3) }
     |e FOIS e { Fois($1,$3) }
-    |LPAR e MOINS e RPAR { Moins($2,$4) }
-    |LPAR e DIV e RPAR { Div($2,$4) }
+    |e MOINS e { Moins($1,$3) }
+    |e DIV e { Div($1,$3) }
     |LPAR e RPAR {$2}
-    |LPAR e PUISS e RPAR { Puiss($2,$4) }
+    |e PUISS e { Puiss($1,$3) }
     |e EQ e { Eq($1,$3) }
     |e NEQ e { Neq($1,$3) }
     |e LESSE e { LessE($1,$3) }
@@ -43,10 +43,9 @@ e:
     |e OR ELSE e { OrElse($1,$4) }
     |MOINS e { Nega($2) }
     |ABS e { Abs($2) }
-    |LPAR NOT e RPAR { Not($3) }
+    |NOT e  { Not($2) }
     |CST_INT { Int($1) }
     |CST_FLOAT { Float($1) }
     |ID { Id($1) }
     
     
-
