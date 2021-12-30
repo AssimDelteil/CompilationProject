@@ -1,7 +1,7 @@
 +%{
   open File
 %}
-%token PLUS MOINS FOIS DIV PUISS EQ NEQ LESSE GREATE LESS GREATT MOD REM AND OR XOR THEN ELSE ABS NOT LPAR RPAR(*Token terminaux sans type*)
+%token PLUS MOINS FOIS DIV PUISS EQ NEQ LESSE GREATE LESST GREATT MOD REM AND OR XOR THEN ELSE ABS NOT LPAR RPAR(*Token terminaux sans type*)
 %token <int> CST
 %token <float> CST
 %token <string> ID
@@ -9,9 +9,10 @@
 %type <File.expr> s
 
 
-%left PLUS MOINS FOIS DIV MOD REM (*Tous ces opérateurs sont parenthésés implicitement vers la gauche*)
-%le
-
+%left EQ NEQ LESSE LESST GREATE GREATT
+%left PLUS MOINS
+%right FOIS DIV MOD REM
+%nonassoc PUISS NOT ABS
 
 
 %%
@@ -29,7 +30,7 @@ e:
     |e NEQ e { Neq($1,$3) }
     |e LESSE e { LessE($1,$3) }
     |e GREATE e { GreatE($1,$3) }
-    |e LESS e { LessT($1,$3) }
+    |e LESST e { LessT($1,$3) }
     |e GREATT e { GreatT($1,$3) }
     |e MOD e { Mod($1,$3) }   
     |e REM e { Rem($1,$3) }
