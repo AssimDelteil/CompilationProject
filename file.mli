@@ -8,9 +8,9 @@ type decla =
     |Sous_type of string * string * string * ada_type * string
     |Rename of notnull_string_list * ada_type * string * string 
     |Procedure of string * parametre
-    |Ada_function of string * parametre * ada_type
-    |Procedure of procedure * string * decla list * string * instr list * string * (string option)
-    |Function of ada_function * string * decla list * string * instr list * string * (string option)
+    |Function of string * parametre * ada_type
+    |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)
+    |DefFunction of decla * string * (decla list) * string * instr list * string * (string option)
 
 (*On définit un type pour chaque élément optionnel de déclaration*)
 type mode = 
@@ -28,10 +28,11 @@ type notnull_string_list =
     |List of string * notnull_string_list
 
 type ada_type =
-    |Boolean
-    |Integer
-    |Float
-    |Character
+    |Boolean of bool
+    |Integer of int
+    |Float of float
+    |Character of char
+    |Range of 
 
 type instr = 
     (*Met un (string option)* au début de chaque instr pour la potentielle étiquette : 
