@@ -27,7 +27,7 @@ type file =
 
 (*Cf discord pour les modifs a faire*)
 type decla =
-    |Objet of notnull_string_list * bool * (ada_type option) * (def option) (*bool est true si il y a constant, false sinon*)
+    |Objet of notnull_string_list * bool * (ada_type option) * (expr option) (*bool est true si il y a constant, false sinon*)
     |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
     |Sous_type of string * string * string * ada_type * string
     |Rename of notnull_string_list * ada_type * string
