@@ -20,7 +20,7 @@
 %%
 
 
-s: d_list i_list {$1}
+s: d_list i_list EOL{$1}
 
 
 e:
@@ -29,7 +29,7 @@ e:
     |e MOINS e { Moins($1,$3) }
     |e DIV e { Div($1,$3) }
     |LPAR e RPAR {$2}
-    |e PUISS e{ Puiss($1,$3) }
+    |e PUISS e { Puiss($1,$3) }
     |e EQ e { Eq($1,$3) }
     |e NEQ e { Neq($1,$3) }
     |e LESSE e { LessE($1,$3) }
@@ -45,7 +45,7 @@ e:
     |e OR ELSE e { OrElse($1,$4) }
     |MOINS e { Nega($2) }
     |ABS e { Abs($2) }
-    |NOT e { Not($2) }
+    |NOT e  { Not($2) }
     |CST_INT { Int($1) }
     |CST_FLOAT { Float($1) }
     |ID { Id($1) }
@@ -106,4 +106,3 @@ i: (*Une seule étiquette est utilisée par instruction*)
 
     
     
-

@@ -132,13 +132,13 @@ let rec aff_aux l a =
         print_sep (l @ ["|\n"]);
         aff_aux (l @ ["  "]) a2
     |AndThen(a1, a2) ->
-        print_string "Xor\n";
+        print_string "AndThen\n";
         print_sep (l @ ["|\n"]);
         aff_aux (l @ ["| "]) a1;
         print_sep (l @ ["|\n"]);
         aff_aux (l @ ["  "]) a2
     |OrElse(a1, a2) ->
-        print_string "Xor\n";
+        print_string "OrElse\n";
         print_sep (l @ ["|\n"]);
         aff_aux (l @ ["| "]) a1;
         print_sep (l @ ["|\n"]);
