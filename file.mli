@@ -78,7 +78,7 @@ type bPT_type_ou_expr =
 "Chaque choix est soit une expression, 
 soit deux expressions séparées par .., 
 soit le mot-clé others" *)
-type case_choix = 
+type case_choix =
     |Expr of expr
     |Range of expr*expr
     |Other
@@ -101,7 +101,7 @@ type instr =
     (*4ème terme pour les elif, 5ème pour le else*)
     |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
-    |Case of (string option)*expr*( ((case_choix list)*instr list) list) 
+    |Case of (string option)*expr*( ((case_choix list)*(instr list)) list) 
     |Goto of (string option)*string
     |Exit of (string option)*(string option)*(expr option)
     (*Retour de procédure et de fonction*)
