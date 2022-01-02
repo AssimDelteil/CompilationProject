@@ -109,21 +109,21 @@ type mode =
     |Out
     |In_out
 
-type parametre =
-    |Fin of notnull_string_list * mode * string
-    |Par of notnull_string_list * mode * string * parametre
+type parametre_list =
+    |LastPara of notnull_string_list * mode * string
+    |ParaList of notnull_string_list * mode * string * parametre_list
 
 type decla =
     |Objet of notnull_string_list * string option * (expr option) 
     |Type of string * expr * expr 
     |Sous_type of string * string * expr * expr
     |Rename of notnull_string_list * string * string
-    |Procedure of string * parametre option
-    |Function of string * parametre option * string
+    |Procedure of string * parametre_list option
+    |Function of string * parametre_list option * string
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
-    |DefProcedure of string * parametre option * (decla list) * instr list * (string option)
-    |DefFunction of string * parametre option * string * (decla list) * instr list * (string option)
-    
+    |DefProcedure of string * parametre_list option * (decla list) * instr list * (string option)
+    |DefFunction of string * parametre_list option * string * (decla list) * instr list * (string option)
+
 type file =
     |File of (decla list)*(instr list)
     
@@ -314,7 +314,7 @@ let rec aff_instr_list l i_list =
     match i_list with
     |[]-> print_string ""
     |i::i_list' -> 
-        aff_instr_aux l i;
+        aff_instr l i;
         print_sep (l @ ["|\n"]);
         aff_instr_list l i_list';
 
@@ -455,33 +455,87 @@ and aff_instr l i =
         print_sep (l @ ["|\n"]);
         aff_expr_aux l e; 
 
-let aff_decla l d = 
+let rec print_notnull_string_list nn_str_list=
+    match nn_str_list with
+    |[] -> assert false (*list est non nulle et condition d'arret à un élt, on est jamais censé arriver ici*)
+    |[str] -> print_string str^"|"
+    |str::nn_str_list' ->  print_string str^"|";
+        print_notnull_string_list nn_str_list'
 
+let print_mode m =
+    print_sep_spec l 
+    match m with 
+    |Null -> print_string "Null"
+    |In -> print_string "In"
+    |Out -> print_string "Out"
+    |In_out -> print_string "In_out"
 
-let aff_instr i = aff_expr_aux [] i
+let rec print_param param_list = 
+    match param_list with
+    |LastPara(nn_str_list, m, id)->
+        print_sep_spec l ;
+        print_notnull_string_list nn_str_list;
+        print_sep (l @ ["|\n"]);
+        print_mode m;
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(id);
+    |ParaList(nn_str_list, m, id, param_list') ->
+        print_sep_spec l ;
+        print_notnull_string_list nn_str_list;
+        print_sep (l @ ["|\n"]);
+        print_mode m;
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(id);
 
-let rec aff_decl_aux l d=
+        print_param param_list'; 
+
+let rec aff_decl l d=
     print_sep_spec l;
     match d with
-    |
-
-let aff_decl d = aff_decl_aux [] d
-
-let aff_instr_aux l f=
-    print_sep_spec l;
-    match a with
-        |Plus(a1, a2) ->
-            print_string "Plus\n";
+    |Objet(nn_str_list, str_option, e_option)->
+        print_option str_option
+        print_string "Objet\n";
+        print_sep (l @ ["|\n"]);
+        print_sep_spec l;
+        print_notnull_string_list nn_str_list;
+        match e_option with 
+        |None -> print_string ""
+        |Some(e) -> 
             print_sep (l @ ["|\n"]);
-            aff_aux (l @ ["| "]) a1;
-            print_sep (l @ ["|\n"]);
-            aff_aux (l @ ["  "]) a2
-        |Moins(a1, a2) ->
-            print_string "Moins\n";
-            print_sep (l @ ["|\n"]);
-            aff_aux (l @ ["| "]) a1;
-            print_sep (l @ ["|\n"]);
-            aff_aux (l @ ["  "]) a2
+            aff_expr_aux l e;
+    |Type(str,e1,e2)->
+        print_string "Type\n";
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(str)
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l e1
+        print_sep (l @ ["|\t..\n"]);
+        aff_expr_aux l e2
+    |Sous_type(str1,str2,e1,e2)->
+        print_string "Sous_type\n";
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(str1)
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(str2)
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l e1
+        print_sep (l @ ["|\t..\n"]);
+        aff_expr_aux l e2
+    |Rename(nn_str_list,str1,str2)->
+        print_string "Rename\n";
+        print_sep (l @ ["|\n"]);
+        print_sep_spec l;
+        print_notnull_string_list nn_str_list;
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(str1)
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(str2)
+    |Procedure(str, param_opt)->
+        print_string "Procedure\n";
+        print_sep (l @ ["|\n"]);
+        aff_expr_aux l Id(str1)
+        print_sep (l @ ["|\n"]);
+        print_param l param;
 
 let aff_file f =
     match f with
