@@ -207,7 +207,7 @@ type bPT_type_ou_expr =
 "Chaque choix est soit une expression, 
 soit deux expressions séparées par .., 
 soit le mot-clé others" *)
-type case_choix = 
+type case_choix =
     |Expr of expr
     |Range of expr*expr
     |Other
@@ -262,7 +262,6 @@ type decla =
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
     |DefProcedure of string * parametre option * (decla list) * instr list * (string option)
     |DefFunction of string * parametre option * string * (decla list) * instr list * (string option)
-
 
 
 

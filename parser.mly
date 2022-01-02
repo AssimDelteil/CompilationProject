@@ -9,16 +9,18 @@
 %start s
 %type <File.file> s
 
+
+%left LOOP END WHILE FOR REVERSE IF ELSIF WHEN OTHERS GOTO EXIT RETURN RANGE INTEGER BOOLEAN CONSTANT TYPE IS SUBTYPE RENAMES PROCEDURE OUT FUNCTION NULL DEB_ETIQ FIN_ETIQ AFFECT PP COMM LPAR RPAR VIR P DP SEP EOL
 %left AND OR XOR AND THEN OR ELSE
 %left EQ NEQ LESSE LESST GREATE GREATT
-%left PLUS MOINS
+%left PLUS MOINS PVIR 
 %right FOIS DIV MOD REM
 %nonassoc PUISS NOT ABS FLECHE IN
 
 
 
-%%
 
+%%
 
 s: PROCEDURE ID IS d_list BEGIN i_list EOL {$4}
 
@@ -35,7 +37,7 @@ e:
     |e FOIS e { Fois($1,$3) }
     |e MOINS e { Moins($1,$3) }
     |e DIV e { Div($1,$3) }
-    |LPAR e RPAR {$2}
+    |LPAR e RPAR { Paren($2) }
     |e PUISS e { Puiss($1,$3) }
     |e EQ e { Eq($1,$3) }
     |e NEQ e { Neq($1,$3) }
@@ -52,20 +54,16 @@ e:
     |e OR ELSE e { OrElse($1,$4) }
     |MOINS e { Nega($2) }
     |ABS e { Abs($2) }
-    |NOT e  { Not($2) }
+    |NOT e { Not($2) }
     |CST_INT { Int($1) }
     |CST_FLOAT { Float($1) }
     |ID { Id($1) }
+    |ID LPAR e_list RPAR { ConvouAppelFct($1,$3) }
 
 e_list:
   |e {[$1]}
-  |e e_list{$1::$2}
+  |e VIR e_list{$1::$3}
 
-
-
-id_list:
-  |ID { Fin($1) }
-  |ID VIR id_list { List($1,$3) }
 
 choix_for:
     |ID { Range($1) }
@@ -94,7 +92,7 @@ case_ligne_list:
 
 i:
     |DEB_ETIQ ID FIN_ETIQ NULL PVIR { Null($2) }
-    |DEB_ETIQ ID FIN_ETIQ ID e PVIR { Affect($2,$4,$5) }
+    |DEB_ETIQ ID FIN_ETIQ ID AFFECT e PVIR { Affect($2,$4,$6) }
     |DEB_ETIQ ID FIN_ETIQ ID e_list PVIR { AppelsProc($2,$4,$5) }
     |DEB_ETIQ ID FIN_ETIQ ID LOOP i_list END LOOP ID PVIR { Loop($2,$4,$6,$9) }
     |DEB_ETIQ ID FIN_ETIQ ID WHILE e LOOP i_list END LOOP ID PVIR { While($2,$4,$6,$8,$11) }
@@ -119,7 +117,7 @@ obj_choix:
   |DP {}
 
 mode:
-    | {}
+    | { Null() }
     |IN { In() }
     |OUT { Out() }
     |IN OUT { In_Out() }
@@ -147,6 +145,9 @@ d:
     |PROCEDURE ID IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,$4,$6,$7) }
     |FUNCTION ID LPAR parametre RPAR RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$7,$9,$11,$12) }
     |FUNCTION ID RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$6,$8,$9) }
+
+
+
 
 
 
