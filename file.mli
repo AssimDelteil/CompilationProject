@@ -66,7 +66,7 @@ type range = int list
 Représente "soit de deux expressions séparées par
 .., soit d’un type" *)
 type bPT_type_ou_expr =
-    |Range of range
+    |Range of string
     |Expr of expr*expr
 
 (* Utilisé par Case  
@@ -85,7 +85,7 @@ type instr =
     A chaque fois que besoin de identifiant: met string *)
     |Null of (string option)
     |Affect of (string option)*string*expr
-    |Proc of (string option)*string*(expr list) (*Procédure d'appel*)
+    |AppelProc of (string option)*string*(expr list) (*Procédure d'appel*)
     (*B = Boucle*)
     |Loop of (string option)*(string option)*(instr list)*(string option)
     |While of (string option)*(string option)*expr*(instr list)*(string option)
@@ -115,21 +115,19 @@ type mode =
     |In_out
 
 type parametre =
-    |Null
+    |Fin of notnull_string_list * mode * string
     |Par of notnull_string_list * mode * string * parametre
 
 type decla =
-    |Objet of notnull_string_list * (string option) * (string option) * (expr option)
-    |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
-    |Sous_type of string * string * string * string * string
+    |Objet of notnull_string_list * string option * (expr option) 
+    |Type of string * expr * expr 
+    |Sous_type of string * string * expr * expr
     |Rename of notnull_string_list * string * string
-    |Procedure of string * parametre 
-    |Function of string * parametre * string
+    |Procedure of string * parametre option
+    |Function of string * parametre option * string
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
-    (*Le premier terme est une decla avec l'attribut Procedure*)
-    |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)
-    (*Le premier terme est une decla avec l'attribut Function*)
-    |DefFunction of decla * string * (decla list) * string * instr list * string * (string option)
+    |DefProcedure of string * parametre option * (decla list) * instr list * (string option)
+    |DefFunction of string * parametre option * string * (decla list) * instr list * (string option)
 
 
 
