@@ -20,7 +20,7 @@
 %%
 
 
-s: d_list i_list EOL{$1}
+s: d_list i_list EOL {$1}
 
 
 e:
