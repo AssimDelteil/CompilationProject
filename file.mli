@@ -26,12 +26,7 @@ type ast =
 
 val affiche : ast -> unit
 
-(*Type auxillière contenant les types de base en Litle Ada*)
-type ada_type =
-    |Boolean of bool
-    |Integer of int
-    |Float of float
-    |String of string
+
 
 (*Type expression demandé*)
 type expr = 
@@ -121,15 +116,15 @@ type mode =
 
 type parametre =
     |Null
-    |Par of notnull_string_list * mode * ada_type * parametre
+    |Par of notnull_string_list * mode * string * parametre
 
 type decla =
-    |Objet of notnull_string_list * bool * (ada_type option) * (expr option) (*bool est true si il y a constant, false sinon*)
+    |Objet of notnull_string_list * (string option) * (string option) * (expr option)
     |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
-    |Sous_type of string * string * string * ada_type * string
-    |Rename of notnull_string_list * ada_type * string
+    |Sous_type of string * string * string * string * string
+    |Rename of notnull_string_list * string * string
     |Procedure of string * parametre 
-    |Function of string * parametre * ada_type
+    |Function of string * parametre * string
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
     (*Le premier terme est une decla avec l'attribut Procedure*)
     |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)

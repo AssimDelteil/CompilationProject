@@ -20,7 +20,7 @@
 %%
 
 
-s: d_list i_list EOL{$1}
+s: PROCEDURE ID IS d_list BEGIN i_list EOL{$1}
 
 
 e:
@@ -58,17 +58,25 @@ i_list:
   |i {[$1]}
   |i i_list{$1::$2}
 
+d_list:
+  |d {[$1]}
+  |d d_list{$1::$2}
+
+id_list:
+  |ID { Fin($1) }
+  |ID VIR id_list { List($1,$3) }
+
 choix_for:
     |RANGE { Range($1) }
     |e e { Expr($1,$2) }
 
-elsif_liste:
-    |VOID {[$1]}   
-    |( ELSIF e THEN i_list ) elsif_liste  {$1::$2}
+else_elsif:
+    |ELSE i_list {$2} 
+    |ELSIF e THEN i_list else_elsif { [If($2,$4,$5)] }
 
 case_choix:
     |e { Expr($1) }
-    |e P P e { Range($1,$4) }
+    |e PP e { Range($1,$4) }
     |OTHERS {$1}
 
 case_choix_list:
@@ -91,14 +99,24 @@ i: (*Une seule étiquette est utilisée par instruction*)
     |DEB_ETIQ ID FIN_ETIQ ID WHILE e LOOP i_list END LOOP ID PVIR { While($2,$4,$6,$8,$11) }
     |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For($2,$4,$6,$7,$8,$9,$11,$14) }
     |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For($2,$4,$6,$7,$8,$10,$13) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_liste ELSE i_list END IF PVIR { For($2,$5,$7,
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_liste END IF PVIR { For($2,$5,$7,
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list else_elsif END IF PVIR { If($2,$5,$7,$8) }
     |DEB_ETIQ ID FIN_ETIQ CASE e IS case_ligne_list END CASE PVIR { Case($2,$5,$7) }
     |DEB_ETIQ ID FIN_ETIQ GOTO ID PVIR { Goto($2,$5) }
     |DEB_ETIQ ID FIN_ETIQ EXIT ID WHEN e PVIR { Exit($2,$5,$7) }
     |DEB_ETIQ ID FIN_ETIQ EXIT PVIR { Exit($2) }
     |DEB_ETIQ ID FIN_ETIQ RETURN PVIR { ReturnProc($2) }
     |DEB_ETIQ ID FIN_ETIQ RETURN e PVIR {ReturnFct($2,$5) }
+
+id_list:
+  |ID { Fin($1) }
+  |ID VIR id_list { List($1,$3) }
+
+def:
+  |
+
+
+d:
+    |id_list DP CONSTANT ID 
 
 
 
