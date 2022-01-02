@@ -24,14 +24,6 @@ type ast =
     |Float of float
     |Id of string 
 
-
-(*Type auxillière contenant les types de base en Litle Ada*)
-type ada_type =
-    |Boolean of bool
-    |Integer of int
-    |Float of float
-    |String of string
-
 (*Type expression demandé*)
 type expr = 
     |Plus of expr*expr
@@ -118,26 +110,23 @@ type mode =
     |In_out
 
 type parametre =
-    |Null
-    |Par of notnull_string_list * mode * ada_type * parametre
+    |Fin of notnull_string_list * mode * string
+    |Par of notnull_string_list * mode * string * parametre
 
 type decla =
-    |Objet of notnull_string_list * bool * (ada_type option) * (expr option) (*bool est true si il y a constant, false sinon*)
-    |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
-    |Sous_type of string * string * string * ada_type * string
-    |Rename of notnull_string_list * ada_type * string
-    |Procedure of string * parametre 
-    |Function of string * parametre * ada_type
+    |Objet of notnull_string_list * string option * (expr option) 
+    |Type of string * expr * expr 
+    |Sous_type of string * string * expr * expr
+    |Rename of notnull_string_list * string * string
+    |Procedure of string * parametre option
+    |Function of string * parametre option * string
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
-    (*Le premier terme est une decla avec l'attribut Procedure*)
-    |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)
-    (*Le premier terme est une decla avec l'attribut Function*)
-    |DefFunction of decla * string * (decla list) * string * instr list * string * (string option)
-
-
-
+    |DefProcedure of string * parametre option * (decla list) * instr list * (string option)
+    |DefFunction of string * parametre option * string * (decla list) * instr list * (string option)
+    
 type file =
     |File of (decla list)*(instr list)
+    
 
 let print_etiquette eti = 
     watch eti with
@@ -295,7 +284,7 @@ let print_option opt =
     |Some(str) -> print_string "Id("^str^")" 
 
 (*Affiche une range, est une liste d'entier continue, [2;...;10] est affiché 2..10*)
-print_range range = 
+let print_range range = 
     let rec print_range_aux i_list=
         match i_list with 
         |[]-> assert false (*ne peut pas atteindre ce point car check si pas vide avant et s'arrete à liste à un élt*)
@@ -366,8 +355,6 @@ and aff_case_list l c_list =
         print_case_choix_list case_choix_list;
         print_sep (l @ ["|\t..\n"]); 
         aff_instr_list l i_list;
-
-
 
 and aff_instr l i = 
     print_sep_spec l;
@@ -499,5 +486,3 @@ let aff_instr_aux l f=
 let aff_file f =
     match f with
     |(d_list, i_list)->
-
-

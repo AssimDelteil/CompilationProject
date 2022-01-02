@@ -26,12 +26,7 @@ type ast =
 
 val affiche : ast -> unit
 
-(*Type auxillière contenant les types de base en Litle Ada*)
-type ada_type =
-    |Boolean of bool
-    |Integer of int
-    |Float of float
-    |String of string
+
 
 (*Type expression demandé*)
 type expr = 
@@ -70,8 +65,13 @@ type range = int list
 (*Utilisé par For 
 Représente "soit de deux expressions séparées par
 .., soit d’un type" *)
+<<<<<<< HEAD
 type for_range =
     |Range of range
+=======
+type bPT_type_ou_expr =
+    |Range of string
+>>>>>>> 68c86a906ae9bfe2bcd84178584948af0e3fb191
     |Expr of expr*expr
 
 (* Utilisé par Case  
@@ -120,21 +120,19 @@ type mode =
     |In_out
 
 type parametre =
-    |Null
-    |Par of notnull_string_list * mode * ada_type * parametre
+    |Fin of notnull_string_list * mode * string
+    |Par of notnull_string_list * mode * string * parametre
 
 type decla =
-    |Objet of notnull_string_list * bool * (ada_type option) * (expr option) (*bool est true si il y a constant, false sinon*)
-    |Type of string * string * expr * expr * string (*Les deux premiers strings désignent "type" et l'identifiant*)
-    |Sous_type of string * string * string * ada_type * string
-    |Rename of notnull_string_list * ada_type * string
-    |Procedure of string * parametre 
-    |Function of string * parametre * ada_type
+    |Objet of notnull_string_list * string option * (expr option) 
+    |Type of string * expr * expr 
+    |Sous_type of string * string * expr * expr
+    |Rename of notnull_string_list * string * string
+    |Procedure of string * parametre option
+    |Function of string * parametre option * string
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
-    (*Le premier terme est une decla avec l'attribut Procedure*)
-    |DefProcedure of decla * string * (decla list) * string * instr list * string * (string option)
-    (*Le premier terme est une decla avec l'attribut Function*)
-    |DefFunction of decla * string * (decla list) * string * instr list * string * (string option)
+    |DefProcedure of string * parametre option * (decla list) * instr list * (string option)
+    |DefFunction of string * parametre option * string * (decla list) * instr list * (string option)
 
 
 
