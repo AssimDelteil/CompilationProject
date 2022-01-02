@@ -137,12 +137,16 @@ d:
     |TYPE ID IS RANGE e PP e PVIR { Type($2,$5,$7) }
     |SUBTYPE ID IS ID RANGE e PP e PVIR { Sous_type($2,$4,$6,$8) }
     |id_list DP ID RENAMES ID PVIR { Rename($1,$3,$5) }
+
     |PROCEDURE ID LPAR parametre RPAR PVIR { Procedure($2,$4) }
     |PROCEDURE ID PVIR { Procedure($2) }
+
     |FUNCTION ID LPAR parametre RPAR RETURN ID PVIR { Function($2,$4,$7) }
     |FUNCTION ID RETURN ID PVIR { Function($2,$4) }
+
     |PROCEDURE ID LPAR parametre RPAR IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,$4,$7,$9,$10) }
     |PROCEDURE ID IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,$4,$6,$7) }
+
     |FUNCTION ID LPAR parametre RPAR RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$7,$9,$11,$12) }
     |FUNCTION ID RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$6,$8,$9) }
 
