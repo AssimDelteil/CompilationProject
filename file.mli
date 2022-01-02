@@ -62,11 +62,16 @@ type expr =
 
 type range = int list
 
-(*Utilisé par BPourTout 
+(*Utilisé par For 
 Représente "soit de deux expressions séparées par
 .., soit d’un type" *)
+<<<<<<< HEAD
+type for_range =
+    |Range of range
+=======
 type bPT_type_ou_expr =
     |Range of string
+>>>>>>> 68c86a906ae9bfe2bcd84178584948af0e3fb191
     |Expr of expr*expr
 
 (* Utilisé par Case  
@@ -92,7 +97,7 @@ type instr =
     (*3ème string option pour le reverse
     Utilise bPT_... pour représenter "soit de deux expressions séparées par
     .., soit d’un type" *)
-    |For of (string option)*(string option)*string*(string option)*bPT_type_ou_expr*(instr list)*(string option)
+    |For of (string option)*(string option)*string*(string option)*for_range*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
     |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
@@ -133,3 +138,5 @@ type decla =
 
 type file =
     |File of (decla list)*(instr list)
+
+val affiche_file : file -> unit

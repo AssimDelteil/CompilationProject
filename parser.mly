@@ -24,9 +24,13 @@
 
 s: PROCEDURE ID IS d_list BEGIN i_list EOL {$4}
 
+<<<<<<< HEAD
+s: d_list i_list EOL {$1}
+=======
 i_list:
   |i {[$1]}
   |i i_list{$1::$2}
+>>>>>>> 68c86a906ae9bfe2bcd84178584948af0e3fb191
 
 d_list:
   |d {[$1]}
