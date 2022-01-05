@@ -38,23 +38,23 @@ d_list:
   |d d_list{$1::$2}
 
 e:
-    |e PLUS e { Plus($1,$3) }
-    |e FOIS e { Fois($1,$3) }
-    |e MOINS e { Moins($1,$3) }
-    |e DIV e { Div($1,$3) }
+    |e PLUS e { Plus($1,$2) }
+    |e FOIS e { Fois($1,$2) }
+    |e MOINS e { Moins($1,$2) }
+    |e DIV e { Div($1,$2) }
     |LPAR e RPAR { $2 }
-    |e PUISS e { Puiss($1,$3) }
-    |e EQ e { Eq($1,$3) }
-    |e NEQ e { Neq($1,$3) }
-    |e LESSE e { LessE($1,$3) }
-    |e GREATE e { GreatE($1,$3) }
-    |e LESST e { LessT($1,$3) }
-    |e GREATT e { GreatT($1,$3) }
-    |e MOD e { Mod($1,$3) }   
-    |e REM e { Rem($1,$3) }
-    |e AND e { And($1,$3) }
-    |e OR e { Or($1,$3) }
-    |e XOR e { Xor($1,$3) }
+    |e PUISS e { Puiss($1,$2) }
+    |e EQ e { Eq($1,$2) }
+    |e NEQ e { Neq($1,$2) }
+    |e LESSE e { LessE($1,$2) }
+    |e GREATE e { GreatE($1,$2) }
+    |e LESST e { LessT($1,$2) }
+    |e GREATT e { GreatT($1,$2) }
+    |e MOD e { Mod($1,$2) }   
+    |e REM e { Rem($1,$2) }
+    |e AND e { And($1,$2) }
+    |e OR e { Or($1,$2) }
+    |e XOR e { Xor($1,$2) }
     |e AND THEN e { AndThen($1,$4) }
     |e OR ELSE e { OrElse($1,$4) }
     |MOINS e { Nega($2) }
@@ -63,16 +63,16 @@ e:
     |CST_INT { Int($1) }
     |CST_FLOAT { Float($1) }
     |ID { Id($1) }
-    |ID LPAR e_list RPAR { ConvOuAppelFct($1,$3) }
+    |ID LPAR e_list RPAR { ConvOuAppelFct($1,$2) }
 
 e_list:
   |e {[$1]}
-  |e VIR e_list{$1::$3}
+  |e VIR e_list{$1::$2}
 
 
 choix_for:
     |ID { ForRange($1) }
-    |e PP e { ForExpr($1,$3) }
+    |e PP e { ForExpr($1,$2) }
 
 
 
@@ -82,15 +82,15 @@ elsif_list:
 
 case_choix:
     |e { Expr($1) }
-    |e PP e { Range($1,$3) }
+    |e PP e { Range($1,$2) }
     |OTHERS { Other }
 
 case_choix_list:
     |case_choix {[$1]}
-    |case_choix SEP case_choix_list {$1::$3}
+    |case_choix SEP case_choix_list {$1::$2}
 
 case_ligne:
-    |case_choix_list FLECHE i_list PVIR {$1,$3}
+    |case_choix_list FLECHE i_list PVIR {$1,$2}
 
 case_ligne_list:
     |case_ligne {[$1]}
@@ -103,33 +103,33 @@ etiquette:
 i:
     |etiquette NULL PVIR { NullInstr($1) }
     |etiquette NULL PVIR { NullInstr(None) }
-    |etiquette ID AFFECT e PVIR { Affect($1,$4,$6) }
-    |etiquette ID e_list PVIR { AppelProc($1,$4,$5) }
-    |etiquette ID LOOP i_list END LOOP ID PVIR { Loop($1,Some($4),$6,Some($9)) }
-    |etiquette ID WHILE e LOOP i_list END LOOP ID PVIR { While($1,Some($4),$6,$8,Some($11)) }
-    |etiquette ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($4),$6,true,$9,$11,Some($14)) }
-    |etiquette ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($4),$6,false,$8,$10,Some($13)) }
+    |etiquette ID AFFECT e PVIR { Affect($1,$2,$5) }
+    |etiquette ID e_list PVIR { AppelProc($1,$2,$4) }
+    |etiquette ID LOOP i_list END LOOP ID PVIR { Loop($1,Some($2),$5,Some($8)) }
+    |etiquette ID WHILE e LOOP i_list END LOOP ID PVIR { While($1,Some($2),$5,$7,Some($10)) }
+    |etiquette ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($2),$5,true,$8,$10,Some($12)) }
+    |etiquette ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($2),$5,false,$7,$9,Some($12)) }
 
-    |etiquette IF e THEN i_list elsif_list END IF PVIR { If($1,$5,$7,Some($8),None) }
-    |etiquette IF e THEN i_list ELSE i_list END IF PVIR { If($1,$5,$7,None,Some($9)) }
-    |etiquette IF e THEN i_list elsif_list ELSE i_list END IF PVIR { If($1,$5,$7,Some($8),Some($10)) }
-    |etiquette IF e THEN i_list END IF PVIR { If($1,$5,$7,None,None) }
+    |etiquette IF e THEN i_list elsif_list END IF PVIR { If($1,$4,$6,Some($7),None) }
+    |etiquette IF e THEN i_list ELSE i_list END IF PVIR { If($1,$4,$6,None,Some($8)) }
+    |etiquette IF e THEN i_list elsif_list ELSE i_list END IF PVIR { If($1,$4,$6,Some($7),Some($9)) }
+    |etiquette IF e THEN i_list END IF PVIR { If($1,$4,$6,None,None) }
 
 
-    |etiquette CASE e IS case_ligne_list END CASE PVIR { Case($1,$5,$7) }
-    |etiquette GOTO ID PVIR { Goto($1,$5) }
-    |etiquette EXIT ID WHEN e PVIR { Exit($1,Some($5),Some($7)) }
+    |etiquette CASE e IS case_ligne_list END CASE PVIR { Case($1,$4,$6) }
+    |etiquette GOTO ID PVIR { Goto($1,$4) }
+    |etiquette EXIT ID WHEN e PVIR { Exit($1,Some($4),Some($6)) }
     |etiquette EXIT PVIR { Exit($1,None,None) }
     |etiquette RETURN PVIR { ReturnProc($1) }
-    |etiquette RETURN e PVIR {ReturnFct($1,$5) }
+    |etiquette RETURN e PVIR {ReturnFct($1,$4) }
 
 
 id_list:
   |ID { Fin($1) }
-  |ID VIR id_list { List($1,$3) }
+  |ID VIR id_list { List($1,$2) }
 
 obj_choix:
-  |DP CONSTANT ID { (Some($3)) }
+  |DP CONSTANT ID { (Some($2)) }
   |DP CONSTANT {None}
   |DP ID { $1 }
   |DP {None}
@@ -141,8 +141,8 @@ mode:
     |IN OUT { In_out }
 
 parametre:
-  |id_list DP mode ID { LastPara($1,$3,$4) }
-  |id_list DP mode ID PVIR parametre { ParaList($1,$3,$4,$6) }
+  |id_list DP mode ID { LastPara($1,$2,$4) }
+  |id_list DP mode ID PVIR parametre { ParaList($1,$2,$4,$6) }
 
 end_function:
   |END {None}
@@ -154,7 +154,7 @@ d:
     |id_list obj_choix PVIR { Objet($1,$2,None) }
     |TYPE ID IS RANGE e PP e PVIR { Type($2,$5,$7) }
     |SUBTYPE ID IS ID RANGE e PP e PVIR { Sous_type($2,$4,$6,$8) }
-    |id_list DP ID RENAMES ID PVIR { Rename($1,$3,$5) }
+    |id_list DP ID RENAMES ID PVIR { Rename($1,$2,$5) }
 
     |PROCEDURE ID LPAR parametre RPAR PVIR { Procedure($2,Some($4)) }
     |PROCEDURE ID PVIR { Procedure($2,None) }
