@@ -71,7 +71,7 @@ choix_for:
 
 else_elsif:
     |ELSE i_list {$2} 
-    |ELSIF e THEN i_list else_elsif { [If($2,$4,$5)] }
+    |ELSIF e THEN i_list else_elsif { [If("",$2,$4,$5,)] }
 
 case_choix:
     |e { Expr($1) }
