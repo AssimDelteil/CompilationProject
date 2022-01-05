@@ -64,7 +64,7 @@ type instr =
     .., soit d’un type" *)
     |For of (string option)*(string option)*string*bool*for_range*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
-    |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
+    |If of (string option)*expr*(instr list)* (((expr*(instr list)) list) option) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
     |Case of (string option)*expr*( ((case_choix list)*(instr list)) list) 
     |Goto of (string option)*string
@@ -300,15 +300,20 @@ let rec aff_instr_list l i_list =
 
 and aff_elif_list l elif_list =
     match elif_list with
-    |[]-> print_string ""
-    |(e,i_list)::elif_list' -> 
+    |None-> 
+        print_sep_spec l;
+        print_string "No elif\n"
+    |Some(elif_list) ->
+        match elif_list with 
+        |[]->print_string ""
+        |(e,i_list)::elif_list' -> 
         print_sep_spec l;
         print_string "Else if\n";
         print_sep (l @ ["|\n"]); 
         aff_expr l e;
         print_sep (l @ ["|\n"]);
         aff_instr_list l i_list;
-        aff_elif_list l elif_list'
+        aff_elif_list l (Some(elif_list'))
 
 and aff_else l option_else = 
     match option_else with
@@ -621,16 +626,28 @@ let print_consts f = Printf.printf ""
                 print_consts_expr e;
                 print_consts_instr_list i_list;
                 print_consts_elif_list elif_list'
+
         in let print_consts_case_list case_list=
             let print_consts_case_choix_list case_choix_list = 
                 match case_choix_list with
                 |[] -> Printf.printf "" 
                 |Expr(e)::ccl' -> 
-
+                    print_consts_expr e;
+                    print_consts_case_list ccl'
+                |Range(e1,e2)::ccl' -> 
+                    print_consts_expr e1;
+                    print_consts_expr e2;
+                    print_consts_case_list ccl'
+                |Other::ccl' -> print_consts_case_list ccl'
+            in 
             match case_list with
             |[]->Printf.printf "" 
             |(case_choix_list,i_list)::case_list'->
-
+                print_consts_case_choix_list case_choix_list;
+                print_consts_instr_list i_list;
+                print_consts_case_list case_list'
+        in
+        (*Fct strat here*) 
         match i with 
         |NullInstr(eti) -> Printf.printf "" 
         |Affect(eti, id, e) -> print_consts_expr e
@@ -655,12 +672,8 @@ let print_consts f = Printf.printf ""
             |Some(else_i_list)-> print_consts_instr_list else_i_list)
         |Case(eti,e,case_list) ->
             print_consts_expr e;
-            case_list
-        |Goto(eti,id) ->
-            print_etiquette eti;
-            print_string "Goto\n";
-            print_sep (l @ ["|\n"]);
-            aff_expr l (Id(id))
+            print_consts_case_list case_list
+        |Goto(eti,id) -> Printf.printf "" 
         |Exit(eti,id_option,e_option) ->
             print_etiquette eti;
             print_string "Exit\n";
