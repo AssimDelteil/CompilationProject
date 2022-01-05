@@ -100,15 +100,19 @@ etiquette:
     | {None}
     |DEB_ETIQ ID FIN_ETIQ { Some($2) }
 
+id_option:
+    | {None}
+    |ID { Some($1) }
+
+
 i:
     |etiquette NULL PVIR { NullInstr($1) }
-    |etiquette NULL PVIR { NullInstr(None) }
     |etiquette ID AFFECT e PVIR { Affect($1,$2,$4) }
     |etiquette ID e_list PVIR { AppelProc($1,$2,$3) }
-    |etiquette ID LOOP i_list END LOOP ID PVIR { Loop($1,Some($2),$4,Some($7)) }
-    |etiquette ID WHILE e LOOP i_list END LOOP ID PVIR { While($1,Some($2),$4,$6,Some($9)) }
-    |etiquette ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($2),$4,true,$7,$9,Some($12)) }
-    |etiquette ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($2),$4,false,$6,$8,Some($11)) }
+    |etiquette id_option LOOP i_list END LOOP id_option PVIR { Loop($1,$2,$4,$7) }
+    |etiquette id_option WHILE e LOOP i_list END LOOP id_option PVIR { While($1,$2,$4,$6,$9) }
+    |etiquette id_option FOR ID IN REVERSE choix_for LOOP i_list END LOOP id_option PVIR { For($1,$2,$4,true,$7,$9,$12) }
+    |etiquette id_option FOR ID IN choix_for LOOP i_list END LOOP id_option PVIR { For($1,$2,$4,false,$6,$8,$11) }
 
     |etiquette IF e THEN i_list elsif_list END IF PVIR { If($1,$3,$5,Some($6),None) }
     |etiquette IF e THEN i_list ELSE i_list END IF PVIR { If($1,$3,$5,None,Some($7)) }
@@ -118,7 +122,7 @@ i:
 
     |etiquette CASE e IS case_ligne_list END CASE PVIR { Case($1,$3,$5) }
     |etiquette GOTO ID PVIR { Goto($1,$3) }
-    |etiquette EXIT ID WHEN e PVIR { Exit($1,Some($3),Some($5)) }
+    |etiquette EXIT id_option WHEN e PVIR { Exit($1,$3,Some($5)) }
     |etiquette EXIT PVIR { Exit($1,None,None) }
     |etiquette RETURN PVIR { ReturnProc($1) }
     |etiquette RETURN e PVIR {ReturnFct($1,$3) }
@@ -131,7 +135,7 @@ id_list:
 obj_choix:
   |DP CONSTANT ID { (Some($3)) }
   |DP CONSTANT {None}
-  |DP ID { $2 }
+  |DP ID { Some($2) }
   |DP {None}
 
 mode:
@@ -146,7 +150,7 @@ parametre:
 
 end_function:
   |END {None}
-  |END ID { $2 }
+  |END ID { Some($2) }
 
 
 d:
