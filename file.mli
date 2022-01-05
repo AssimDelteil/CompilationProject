@@ -99,8 +99,9 @@ type decla =
     |DefProcedure of string * parametre_list option * (decla list) * instr list * (string option)
     |DefFunction of string * parametre_list option * string * (decla list) * instr list * (string option)
 
+(*Fichier est une procédure: contient nom de la procédure, des déclarations optionnelles et des instructions*)
 type file =
-    |File of string*(decla list)*(instr list)
+    |File of string*(decla list) option*(instr list)
 
 (*@requires nothing
 @ensures print ast of file*)

@@ -99,8 +99,9 @@ type decla =
     |DefProcedure of string * parametre_list option * (decla list) * instr list * (string option)
     |DefFunction of string * parametre_list option * string * (decla list) * instr list * (string option)
 
+(*Fichier est une procédure: contient nom de la procédure, des déclarations optionnelles et des instructions*)
 type file =
-    |File of string*(decla list)*(instr list)
+    |File of string*(decla list) option*(instr list)
     
 
 let print_etiquette eti = 
@@ -558,7 +559,6 @@ let aff_file f =
             print_sep (l @ ["|\n"]);
             print_sep_spec l;
             print_option str_opt
-
         |DefFunction(id, param_opt, id_type_retour, d_list, i_list, str_opt) ->
             print_string "DefFunction\n";
             print_sep (l @ ["|\n"]);
@@ -576,69 +576,78 @@ let aff_file f =
             print_option str_opt
 
     in 
-
     match f with
-    |File(id,d_list, i_list)-> 
+    |File(id,None, i_list)-> 
         print_string "File\n";
         aff_expr [""] (Id(id));
         print_sep (["|\n"]);
-        aff_delc_list [""] d_list ;
+        print_string "|Pas de déclarations";
+        print_sep (["|\n"]); 
+        aff_instr_list [""] i_list;
+        print_string "End Of File\n"
+    |File(id,Some(d_file), i_list)-> 
+        print_string "File\n";
+        aff_expr [""] (Id(id));
+        print_sep (["|\n"]);
+        aff_delc_list [""] d_file;
         print_sep (["|\n"]); 
         aff_instr_list [""] i_list;
         print_string "End Of File\n"
 
-let print_consts f = Printf.printf ""
-    (*let rec print_consts_expr e =
-    match e with 
-    |Plus(a1, a2)|Moins(a1, a2)|Fois(a1, a2)|Div(a1, a2)|Puiss(a1, a2)|Eq(a1, a2)
-    |Neq(a1, a2)|LessE(a1, a2)|LessT(a1, a2)|GreatE(a1, a2)|GreatT(a1, a2)|Mod(a1, a2)
-    |Rem(a1, a2)|And(a1, a2)|Or(a1, a2)|Xor(a1, a2)|AndThen(a1, a2)|OrElse(a1, a2)->
-        print_consts_expr a1;
-        print_consts_expr a2
-    |Not (a)|Abs (a)|Nega (a) ->        
-        print_consts_expr a
-    |ConvOuAppelFct(id,e_list) ->
-        print_consts_expr_list e_list
-    |Int i -> Printf.printf "%i\n" i
-    |Float f -> Printf.printf "%f\n" f
-    |Id s -> Printf.printf "" 
+let print_consts f = 
+    let rec print_consts_expr e =
+        match e with 
+        |Plus(a1, a2)|Moins(a1, a2)|Fois(a1, a2)|Div(a1, a2)|Puiss(a1, a2)|Eq(a1, a2)
+        |Neq(a1, a2)|LessE(a1, a2)|LessT(a1, a2)|GreatE(a1, a2)|GreatT(a1, a2)|Mod(a1, a2)
+        |Rem(a1, a2)|And(a1, a2)|Or(a1, a2)|Xor(a1, a2)|AndThen(a1, a2)|OrElse(a1, a2)->
+            print_consts_expr a1;
+            print_consts_expr a2;
+        |Not (a)|Abs (a)|Nega (a) ->        
+            print_consts_expr a;
+        |ConvOuAppelFct(id,e_list) ->
+            print_consts_expr_list e_list;
+        |Int i -> Printf.printf "%i\n" i;
+        |Float f -> Printf.printf "%f\n" f;
+        |Id s -> Printf.printf "";
 
     and print_consts_expr_list e_list = 
-    match e_list with
-    |[]-> Printf.printf "" 
-    |e::e_list' -> 
-        print_consts_expr e;
-        print_consts_expr_list e_list'
-
-
+        match e_list with
+        |[]-> Printf.printf "";
+        |e::e_list' -> 
+            print_consts_expr e;
+            print_consts_expr_list e_list';
+    in 
     let rec print_consts_instr_list i_list =
-    match i_list with
-    |[]-> Printf.printf "" 
-    i::i_list' -> 
-        print_consts_instr i;
-        print_consts_instr_list i_list'
+        match i_list with
+        |[]-> Printf.printf "";
+        |i::i_list' -> 
+            print_consts_instr i;
+            print_consts_instr_list i_list';
     
     and print_consts_instr i =
-        let print_consts_elif_list elif_list = 
+        let rec print_consts_elif_list elif_list = 
             match elif_list with 
-            |[]-> Printf.printf "" 
-            |(e,i_list)::elif_list' ->
-                print_consts_expr e;
-                print_consts_instr_list i_list;
-                print_consts_elif_list elif_list'
-
-        in let print_consts_case_list case_list=
-            let print_consts_case_choix_list case_choix_list = 
+            |None-> Printf.printf "" 
+            |Some(elif_list) ->
+                match elif_list with 
+                |[]->print_string ""
+                |(e,i_list)::elif_list' -> 
+                    print_consts_expr e;
+                    print_consts_instr_list i_list;
+                    print_consts_elif_list (Some(elif_list'))
+        in
+        let rec print_consts_case_list case_list=
+            let rec print_consts_case_choix_list case_choix_list = 
                 match case_choix_list with
                 |[] -> Printf.printf "" 
                 |Expr(e)::ccl' -> 
                     print_consts_expr e;
-                    print_consts_case_list ccl'
+                    print_consts_case_choix_list ccl'
                 |Range(e1,e2)::ccl' -> 
                     print_consts_expr e1;
                     print_consts_expr e2;
-                    print_consts_case_list ccl'
-                |Other::ccl' -> print_consts_case_list ccl'
+                    print_consts_case_choix_list ccl';
+                |Other::ccl' -> print_consts_case_choix_list ccl'
             in 
             match case_list with
             |[]->Printf.printf "" 
@@ -647,62 +656,81 @@ let print_consts f = Printf.printf ""
                 print_consts_instr_list i_list;
                 print_consts_case_list case_list'
         in
-        (*Fct strat here*) 
+
+        (*print_consts_instr strat here*) 
         match i with 
-        |NullInstr(eti) -> Printf.printf "" 
+        |NullInstr(eti) -> Printf.printf "";
         |Affect(eti, id, e) -> print_consts_expr e
-        |AppelProc(eti,id,e_list) -> print_consts_expr_list l e_list
-        |Loop(eti, nom_boucle, i_list, nom_end) -> print_consts_instr_list i_list
+        |AppelProc(eti,id,e_list) -> print_consts_expr_list e_list;
+        |Loop(eti, nom_boucle, i_list, nom_end) -> print_consts_instr_list i_list;
         |While(eti,nom_boucle, e, i_list, nom_end) -> 
             print_consts_expr e;
-            print_consts_instr_list i_list
+            print_consts_instr_list i_list;
         |For(eti, nom_boucle, id, rev_option, range_for, i_list, nom_end) ->
             (match range_for with 
             |ForRange(str) -> Printf.printf "" 
-            |ForExpre(e1,e2) -> 
+            |ForExpr(e1,e2) -> 
                 print_consts_expr e1;
                 print_consts_expr e2);
-            print_consts_instr_list i_list
+            print_consts_instr_list i_list;
         |If(eti,e,i_list,elif_list, option_else) ->
             print_consts_expr e;
             print_consts_instr_list i_list;
             print_consts_elif_list elif_list;
             (match option_else with 
             |None->Printf.printf "" 
-            |Some(else_i_list)-> print_consts_instr_list else_i_list)
+            |Some(else_i_list)-> print_consts_instr_list else_i_list);
         |Case(eti,e,case_list) ->
             print_consts_expr e;
-            print_consts_case_list case_list
-        |Goto(eti,id) -> Printf.printf "" 
+            print_consts_case_list case_list;
+        |Goto(eti,id) -> Printf.printf "" ;
         |Exit(eti,id_option,e_option) ->
-            print_etiquette eti;
-            print_string "Exit\n";
-            (
-            match (id_option, e_option) with 
-            |(None, None) -> print_string ""
-            |(None, Some(e))->
-                print_sep (l @ ["|\n"]);
-                aff_expr l e
-            |(Some(id), None) -> 
-                print_sep (l @ ["|\n"]);
-                print_sep_spec l;
-                print_option id_option
-            |(Some(id),Some(e)) ->
-                print_sep (l @ ["|\n"]);
-                print_sep_spec l;
-                print_option id_option;
-                print_sep (l @ ["|\n"]);
-                aff_expr l e
-            )
-        |ReturnProc(eti) ->
-            print_etiquette eti;
-            print_string "ReturnProc\n"
-        |ReturnFct(eti,e) ->
-            print_etiquette eti;
-            print_string "AppelProc\n";
-            print_sep (l @ ["|\n"]);
-            aff_expr l e*)
+            (match e_option with 
+            |None -> print_string "";
+            |Some(e)-> print_consts_expr e);
+        |ReturnProc(eti) -> Printf.printf "";
+        |ReturnFct(eti,e) -> print_consts_expr e;
+    in 
 
+    let rec print_consts_decla_list d_list =
+        match d_list with
+        |[]-> Printf.printf "";
+        |d::d_list' -> 
+            print_consts_decla d;
+            print_consts_decla_list d_list';
+
+    and print_consts_decla d =
+        match d with
+            |Objet(nn_str_list, str_option, e_option)->
+                (match e_option with 
+                |None -> print_string ""
+                |Some(e) -> print_consts_expr e);
+            |Type(str,e1,e2)->
+                print_consts_expr e1;
+                print_consts_expr e2;
+            |Sous_type(str1,str2,e1,e2)->
+                print_consts_expr e1;
+                print_consts_expr e2;
+            |Rename(nn_str_list,str1,str2)-> print_string "";
+            |Procedure(str, param_opt)-> print_string "";
+            |Function(id, param_opt, id_type_retour) -> print_string "";
+            |DefProcedure(id, param_opt, d_list, i_list, str_opt) ->
+                print_consts_decla_list d_list;
+                print_consts_instr_list i_list;
+            |DefFunction(id, param_opt, id_type_retour, d_list, i_list, str_opt) ->
+                print_consts_decla_list d_list;
+                print_consts_instr_list i_list;
+    in 
+    (*print_consts strat here*) 
+    (match f with 
+    |File(str,None,i_list)->
+        Printf.printf "Constantes : \n";
+        print_consts_instr_list i_list
+    |File(str,Some(d_list),i_list)->
+        Printf.printf "Constantes : \n";
+        print_consts_decla_list d_list;
+        print_consts_instr_list i_list)
+    
 let check_affect f = true 
 
 let check_scope f = true
