@@ -135,28 +135,28 @@ parametre:
   |id_list DP mode ID PVIR parametre { Par($1,$3,$4,$6) }
 
 end_function:
-  |END {}
-  |END ID { ($2) }
+  |END {None}
+  |END ID { Some($2) }
 
 
 d:
-    |id_list obj_choix AFFECT e PVIR { Objet($1,$2,$4) }
-    |id_list obj_choix PVIR { Objet($1,$2) }
+    |id_list obj_choix AFFECT e PVIR { Objet($1,$2,Some($4)) }
+    |id_list obj_choix PVIR { Objet($1,None,$2) }
     |TYPE ID IS RANGE e PP e PVIR { Type($2,$5,$7) }
     |SUBTYPE ID IS ID RANGE e PP e PVIR { Sous_type($2,$4,$6,$8) }
     |id_list DP ID RENAMES ID PVIR { Rename($1,$3,$5) }
 
-    |PROCEDURE ID LPAR parametre RPAR PVIR { Procedure($2,$4) }
-    |PROCEDURE ID PVIR { Procedure($2) }
+    |PROCEDURE ID LPAR parametre RPAR PVIR { Procedure($2,Some($4)) }
+    |PROCEDURE ID PVIR { Procedure($2,None) }
 
-    |FUNCTION ID LPAR parametre RPAR RETURN ID PVIR { Function($2,$4,$7) }
-    |FUNCTION ID RETURN ID PVIR { Function($2,$4) }
+    |FUNCTION ID LPAR parametre RPAR RETURN ID PVIR { Function($2,Some($4),$7) }
+    |FUNCTION ID RETURN ID PVIR { Function($2,,None,$4) }
 
-    |PROCEDURE ID LPAR parametre RPAR IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,$4,$7,$9,$10) }
-    |PROCEDURE ID IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,$4,$6,$7) }
+    |PROCEDURE ID LPAR parametre RPAR IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,Some($4),$7,$9,$10) }
+    |PROCEDURE ID IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,None,$4,$6,$7) }
 
-    |FUNCTION ID LPAR parametre RPAR RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$7,$9,$11,$12) }
-    |FUNCTION ID RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$6,$8,$9) }
+    |FUNCTION ID LPAR parametre RPAR RETURN ID IS d_list BEGIN i_list end_function PVIR { DefFunction($2,Some($4),$7,$9,$11,$12) }
+    |FUNCTION ID RETURN ID IS d_list BEGIN i_list end_function PVIR { DefFunction($2,None,$4,$6,$8,$9) }
 
 
 
