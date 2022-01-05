@@ -36,7 +36,7 @@ type range = int list
 Représente "soit de deux expressions séparées par
 .., soit d’un type" *)
 type for_range =
-    |ForRange of range
+    |ForRange of string
     |ForExpr of expr*expr
 
 (* Utilisé par Case  
@@ -279,9 +279,9 @@ let print_range range =
 (*Affiche la range d'un for, peut être un range, ou etre composé de deux expr*)
 let print_for_range l range = 
     match range with
-    |ForRange(r)->
+    |ForRange(id)->
         print_sep_spec l;
-        print_range r
+        aff_expr l (Id(id))
     |ForExpr(e1,e2)->
         aff_expr l e1;
         print_sep (l @ ["|\n"]);

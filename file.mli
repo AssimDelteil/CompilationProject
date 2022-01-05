@@ -36,7 +36,7 @@ type range = int list
 Représente "soit de deux expressions séparées par
 .., soit d’un type" *)
 type for_range =
-    |ForRange of range
+    |ForRange of string
     |ForExpr of expr*expr
 
 (* Utilisé par Case  
