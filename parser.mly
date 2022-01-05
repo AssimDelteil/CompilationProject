@@ -25,8 +25,8 @@
 s:s_prime EOF{$1}
 
 s_prime: 
-    |PROCEDURE ID IS d_list BEGIN i_list {File($2,Some($4),$6)}
-    |PROCEDURE ID IS BEGIN i_list {File($2,None,$5)}
+    |PROCEDURE ID IS d_list BEGIN i_list END ID PVIR {File($2,Some($4),$6)}
+    |PROCEDURE ID IS BEGIN i_list END ID PVIR {File($2,None,$5)}
 
 
 i_list:
@@ -96,28 +96,32 @@ case_ligne_list:
     |case_ligne {[$1]}
     |case_ligne case_ligne_list {$1::$2}
 
+etiquette:
+    | {None}
+    |DEB_ETIQ ID FIN_ETIQ { Some($1) }
 
 i:
-    |DEB_ETIQ ID FIN_ETIQ NULL PVIR { NullInstr(Some($2)) }
-    |DEB_ETIQ ID FIN_ETIQ ID AFFECT e PVIR { Affect(Some($2),$4,$6) }
-    |DEB_ETIQ ID FIN_ETIQ ID e_list PVIR { AppelProc(Some($2),$4,$5) }
-    |DEB_ETIQ ID FIN_ETIQ ID LOOP i_list END LOOP ID PVIR { Loop(Some($2),Some($4),$6,Some($9)) }
-    |DEB_ETIQ ID FIN_ETIQ ID WHILE e LOOP i_list END LOOP ID PVIR { While(Some($2),Some($4),$6,$8,Some($11)) }
-    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,true,$9,$11,Some($14)) }
-    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,false,$8,$10,Some($13)) }
+    |etiquette NULL PVIR { NullInstr($1) }
+    |etiquette NULL PVIR { NullInstr(None) }
+    |etiquette ID AFFECT e PVIR { Affect($1,$4,$6) }
+    |etiquette ID e_list PVIR { AppelProc($1,$4,$5) }
+    |etiquette ID LOOP i_list END LOOP ID PVIR { Loop($1,Some($4),$6,Some($9)) }
+    |etiquette ID WHILE e LOOP i_list END LOOP ID PVIR { While($1,Some($4),$6,$8,Some($11)) }
+    |etiquette ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($4),$6,true,$9,$11,Some($14)) }
+    |etiquette ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For($1,Some($4),$6,false,$8,$10,Some($13)) }
 
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list END IF PVIR { If(Some($2),$5,$7,Some($8),None) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,None,Some($9)) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,Some($8),Some($10)) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list END IF PVIR { If(Some($2),$5,$7,None,None) }
+    |etiquette IF e THEN i_list elsif_list END IF PVIR { If($1,$5,$7,Some($8),None) }
+    |etiquette IF e THEN i_list ELSE i_list END IF PVIR { If($1,$5,$7,None,Some($9)) }
+    |etiquette IF e THEN i_list elsif_list ELSE i_list END IF PVIR { If($1,$5,$7,Some($8),Some($10)) }
+    |etiquette IF e THEN i_list END IF PVIR { If($1,$5,$7,None,None) }
 
 
-    |DEB_ETIQ ID FIN_ETIQ CASE e IS case_ligne_list END CASE PVIR { Case(Some($2),$5,$7) }
-    |DEB_ETIQ ID FIN_ETIQ GOTO ID PVIR { Goto(Some($2),$5) }
-    |DEB_ETIQ ID FIN_ETIQ EXIT ID WHEN e PVIR { Exit(Some($2),Some($5),Some($7)) }
-    |DEB_ETIQ ID FIN_ETIQ EXIT PVIR { Exit(Some($2),None,None) }
-    |DEB_ETIQ ID FIN_ETIQ RETURN PVIR { ReturnProc(Some($2)) }
-    |DEB_ETIQ ID FIN_ETIQ RETURN e PVIR {ReturnFct(Some($2),$5) }
+    |etiquette CASE e IS case_ligne_list END CASE PVIR { Case($1,$5,$7) }
+    |etiquette GOTO ID PVIR { Goto($1,$5) }
+    |etiquette EXIT ID WHEN e PVIR { Exit($1,Some($5),Some($7)) }
+    |etiquette EXIT PVIR { Exit($1,None,None) }
+    |etiquette RETURN PVIR { ReturnProc($1) }
+    |etiquette RETURN e PVIR {ReturnFct($1,$5) }
 
 
 id_list:
@@ -127,7 +131,7 @@ id_list:
 obj_choix:
   |DP CONSTANT ID { (Some($3)) }
   |DP CONSTANT {None}
-  |DP ID { Some($2) }
+  |DP ID { $1 }
   |DP {None}
 
 mode:
@@ -142,7 +146,7 @@ parametre:
 
 end_function:
   |END {None}
-  |END ID { Some($2) }
+  |END ID { $1 }
 
 
 d:
