@@ -100,6 +100,6 @@ type decla =
     |DefFunction of string * parametre_list option * string * (decla list) * instr list * (string option)
 
 type file =
-    |File of (decla list)*(instr list)
+    |File of string*(decla list)*(instr list)
 
 val aff_file : file -> unit
