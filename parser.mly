@@ -69,14 +69,16 @@ choix_for:
     |ID { ForRange($1) }
     |e PP e { ForExpr($1,$3) }
 
-else_elsif:
-    |ELSE i_list {$2} 
-    |ELSIF e THEN i_list else_elsif { [If("",$2,$4,$5,)] }
+
+
+elsif_list:
+    |ELSIF e THEN i_list { [($2,$4)] }
+    |ELSIF e THEN i_list elsif_list { ($2,$4)::$5 }
 
 case_choix:
     |e { Expr($1) }
     |e PP e { Range($1,$3) }
-    |OTHERS {}
+    |OTHERS { Other }
 
 case_choix_list:
     |case_choix {[$1]}
@@ -91,20 +93,26 @@ case_ligne_list:
 
 
 i:
-    |DEB_ETIQ ID FIN_ETIQ NULL PVIR { Null($2) }
-    |DEB_ETIQ ID FIN_ETIQ ID AFFECT e PVIR { Affect($2,$4,$6) }
-    |DEB_ETIQ ID FIN_ETIQ ID e_list PVIR { AppelsProc($2,$4,$5) }
-    |DEB_ETIQ ID FIN_ETIQ ID LOOP i_list END LOOP ID PVIR { Loop($2,$4,$6,$9) }
-    |DEB_ETIQ ID FIN_ETIQ ID WHILE e LOOP i_list END LOOP ID PVIR { While($2,$4,$6,$8,$11) }
-    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For($2,$4,$6,$9,$11,$14) }
-    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For($2,$4,$6,$8,$10,$13) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list else_elsif END IF PVIR { If($2,$5,$7,$8) }
-    |DEB_ETIQ ID FIN_ETIQ CASE e IS case_ligne_list END CASE PVIR { Case($2,$5,$7) }
-    |DEB_ETIQ ID FIN_ETIQ GOTO ID PVIR { Goto($2,$5) }
-    |DEB_ETIQ ID FIN_ETIQ EXIT ID WHEN e PVIR { Exit($2,$5,$7) }
-    |DEB_ETIQ ID FIN_ETIQ EXIT PVIR { Exit($2) }
-    |DEB_ETIQ ID FIN_ETIQ RETURN PVIR { ReturnProc($2) }
-    |DEB_ETIQ ID FIN_ETIQ RETURN e PVIR {ReturnFct($2,$5) }
+    |DEB_ETIQ ID FIN_ETIQ NULL PVIR { NullInstr(Some($2)) }
+    |DEB_ETIQ ID FIN_ETIQ ID AFFECT e PVIR { Affect(Some($2),$4,$6) }
+    |DEB_ETIQ ID FIN_ETIQ ID e_list PVIR { AppelsProc(Some($2),$4,$5) }
+    |DEB_ETIQ ID FIN_ETIQ ID LOOP i_list END LOOP ID PVIR { Loop(Some($2),Some($4),$6,Some($9)) }
+    |DEB_ETIQ ID FIN_ETIQ ID WHILE e LOOP i_list END LOOP ID PVIR { While(Some($2),Some($4),$6,$8,Some($11)) }
+    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,False,$9,$11,Some($14)) }
+    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,False,$8,$10,Some($13)) }
+
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list END IF PVIR { If(Some($2),$5,$7,$8,None) }
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,Some($9)) }
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,$8,Some($10)) }
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list END IF PVIR { If(Some($2),$5,$7,None) }
+
+
+    |DEB_ETIQ ID FIN_ETIQ CASE e IS case_ligne_list END CASE PVIR { Case(Some($2),$5,$7) }
+    |DEB_ETIQ ID FIN_ETIQ GOTO ID PVIR { Goto(Some($2),$5) }
+    |DEB_ETIQ ID FIN_ETIQ EXIT ID WHEN e PVIR { Exit(Some($2),Some($5),Some($7)) }
+    |DEB_ETIQ ID FIN_ETIQ EXIT PVIR { Exit(Some($2),None,None) }
+    |DEB_ETIQ ID FIN_ETIQ RETURN PVIR { ReturnProc(Some($2)) }
+    |DEB_ETIQ ID FIN_ETIQ RETURN e PVIR {ReturnFct(Some($2),$5) }
 
 id_list:
   |ID { Fin($1) }
