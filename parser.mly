@@ -22,7 +22,11 @@
 
 %%
 
-s: PROCEDURE ID IS d_list BEGIN i_list EOL {File($2,$4,$6)}
+s:s_prime
+
+s_prime: 
+    |PROCEDURE ID IS d_list BEGIN i_list EOL {File($2,Some($4),$6)}
+    |PROCEDURE ID IS BEGIN i_list EOL {File($2,None,$5)}
 
 
 i_list:
@@ -30,8 +34,7 @@ i_list:
   |i i_list{$1::$2}
 
 d_list:
-  | {None}
-  |d {Some([$1])}
+  |d {[$1]}
   |d d_list{$1::$2}
 
 e:
