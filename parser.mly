@@ -110,7 +110,8 @@ id_option:
 i:
     |etiquette NULL PVIR  { NullInstr($1) }
     |etiquette ID AFFECT e PVIR  { Affect($1,$2,$4) }
-    |etiquette ID LPAR e_list RPAR PVIR  { AppelProc($1,$2,$4) }
+    |etiquette ID LPAR e_list RPAR PVIR  { AppelProc($1,$2,Some($4)) }
+    |etiquette ID PVIR { AppelProc($1,$2,None) }
     |etiquette id_option LOOP i_list END LOOP id_option PVIR  { Loop($1,$2,$4,$7) }
     |etiquette id_option WHILE e LOOP i_list END LOOP id_option PVIR  { While($1,$2,$4,$6,$9) }
     |etiquette id_option FOR ID IN REVERSE choix_for LOOP i_list END LOOP id_option PVIR  { For($1,$2,$4,true,$7,$9,$12) }
