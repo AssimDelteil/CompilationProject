@@ -579,3 +579,12 @@ let aff_file f =
         print_sep (["|\n"]); 
         aff_instr_list [""] i_list;
         print_string "End Of File\n"
+
+let print_consts f = 
+match f with 
+|(_,d_list,i_list)-> print_string ""
+
+let check_affect f = true 
+
+let check_scope f = true
+

@@ -102,4 +102,20 @@ type decla =
 type file =
     |File of string*(decla list)*(instr list)
 
+(*@requires nothing
+@ensures print ast of file*)
 val aff_file : file -> unit
+
+(*@requires nothing
+@ensures print constant of ast*)
+val print_consts : file -> unit 
+
+(*@requires nothing
+@ensures return true if affectations are correct
+@raises Not_correct(str) with str containing information on why the affect is not correct*)
+val check_affect : file -> bool 
+
+(*@requires nothing
+@ensures return true if scopes are correct
+@raises Not_correct(str) with str containing information on why there is a probleme with scope*)
+val check_scope : file -> bool 
