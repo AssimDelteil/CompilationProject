@@ -54,8 +54,8 @@ type instr =
     d’un identifiant entre << et >>, suivie de :"
     A chaque fois que besoin de identifiant: met string *)
     |NullInstr of (string option)
-    |Affect of (string option)*string*expr²
-    |AppelProc of (string option)*string*(expr list) (*Procédure d'appel*)
+    |Affect of (string option)*string*expr
+    |AppelProc of (string option)*string*(expr list) option(*Procédure d'appel*)
     (*B = Boucle*)
     |Loop of (string option)*(string option)*(instr list)*(string option)
     |While of (string option)*(string option)*expr*(instr list)*(string option)

@@ -55,7 +55,7 @@ type instr =
     A chaque fois que besoin de identifiant: met string *)
     |NullInstr of (string option)
     |Affect of (string option)*string*expr
-    |AppelProc of (string option)*string*(expr list) (*Procédure d'appel*)
+    |AppelProc of (string option)*string*(expr list) option (*Procédure d'appel*)
     (*B = Boucle*)
     |Loop of (string option)*(string option)*(instr list)*(string option)
     |While of (string option)*(string option)*expr*(instr list)*(string option)
@@ -358,13 +358,16 @@ and aff_instr l i =
         aff_expr l (Id(id));
         print_sep (l @ ["|\n"]);
         aff_expr l expr
-    |AppelProc(eti,id,e_list) ->
+    |AppelProc(eti,id,e_list_opt) ->
         print_etiquette eti;
         print_string "AppelProc\n";
         print_sep (l @ ["|\n"]);
         aff_expr l (Id(id));
-        print_sep (l @ ["|\n"]);
-        aff_expr_list l e_list
+        (match e_list_opt with
+        |None -> print_string ""
+        |Some(e_list) -> 
+            print_sep (l @ ["|\n"]);
+            aff_expr_list l e_list)
     |Loop(eti, nom_boucle, i_list, nom_end) ->
         print_etiquette eti;
         print_option nom_boucle;
@@ -445,7 +448,7 @@ and aff_instr l i =
         print_string "ReturnProc\n"
     |ReturnFct(eti,e) ->
         print_etiquette eti;
-        print_string "AppelProc\n";
+        print_string "ReturnFct\n";
         print_sep (l @ ["|\n"]);
         aff_expr l e 
 
@@ -663,7 +666,10 @@ let print_consts f =
         match i with 
         |NullInstr(eti) -> Printf.printf "";
         |Affect(eti, id, e) -> print_consts_expr e
-        |AppelProc(eti,id,e_list) -> print_consts_expr_list e_list;
+        |AppelProc(eti,id,e_list_opt) -> 
+            (match e_list_opt with
+            |None -> print_string ""
+            |Some(e_list) -> print_consts_expr_list e_list)
         |Loop(eti, nom_boucle, i_list, nom_end) -> print_consts_instr_list i_list;
         |While(eti,nom_boucle, e, i_list, nom_end) -> 
             print_consts_expr e;
