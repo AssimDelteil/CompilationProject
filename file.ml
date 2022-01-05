@@ -96,11 +96,12 @@ type decla =
     |Procedure of string * parametre_list option
     |Function of string * parametre_list option * string
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
-    |DefProcedure of string * parametre_list option * (decla list) * (instr list) * (string option)
+    |DefProcedure of string * parametre_list option * (decla list) * instr list * (string option)
     |DefFunction of string * parametre_list option * string * (decla list) * instr list * (string option)
 
 type file =
     |File of string*(decla list)*(instr list)
+
     
 
 let print_etiquette eti = 
@@ -582,7 +583,7 @@ let aff_file f =
 
 let print_consts f = 
 match f with 
-|(_,d_list,i_list)-> print_string ""
+|File(_,d_list,i_list)-> print_string ""
 
 let check_affect f = true 
 

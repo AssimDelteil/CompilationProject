@@ -770,7 +770,7 @@ let yyact = [|
     let _6 = (Parsing.peek_val __caml_parser_env 1 : 'i_list) in
     Obj.repr(
 # 25 "parser.mly"
-                                           (_4)
+                                           (File(_2,_4,_6))
 # 775 "parser.ml"
                : File.file))
 ; (fun __caml_parser_env ->
@@ -839,7 +839,7 @@ let yyact = [|
     let _2 = (Parsing.peek_val __caml_parser_env 1 : 'e) in
     Obj.repr(
 # 40 "parser.mly"
-                 ( Paren(_2) )
+                 ( _2 )
 # 844 "parser.ml"
                : 'e))
 ; (fun __caml_parser_env ->
@@ -1023,7 +1023,7 @@ let yyact = [|
     let _1 = (Parsing.peek_val __caml_parser_env 0 : string) in
     Obj.repr(
 # 69 "parser.mly"
-        ( Range(_1) )
+        ( ForRange(_1) )
 # 1028 "parser.ml"
                : 'choix_for))
 ; (fun __caml_parser_env ->
@@ -1031,7 +1031,7 @@ let yyact = [|
     let _3 = (Parsing.peek_val __caml_parser_env 0 : 'e) in
     Obj.repr(
 # 70 "parser.mly"
-            ( Expr(_1,_3) )
+            ( ForExpr(_1,_3) )
 # 1036 "parser.ml"
                : 'choix_for))
 ; (fun __caml_parser_env ->
@@ -1047,7 +1047,7 @@ let yyact = [|
     let _5 = (Parsing.peek_val __caml_parser_env 0 : 'else_elsif) in
     Obj.repr(
 # 74 "parser.mly"
-                                    ( [If(_2,_4,_5)] )
+                                    ( [If("",_2,_4,_5,)] )
 # 1052 "parser.ml"
                : 'else_elsif))
 ; (fun __caml_parser_env ->
@@ -1383,14 +1383,14 @@ let yyact = [|
     let _2 = (Parsing.peek_val __caml_parser_env 4 : string) in
     let _4 = (Parsing.peek_val __caml_parser_env 2 : 'parametre) in
     Obj.repr(
-# 140 "parser.mly"
+# 141 "parser.mly"
                                            ( Procedure(_2,_4) )
 # 1389 "parser.ml"
                : 'd))
 ; (fun __caml_parser_env ->
     let _2 = (Parsing.peek_val __caml_parser_env 1 : string) in
     Obj.repr(
-# 141 "parser.mly"
+# 142 "parser.mly"
                        ( Procedure(_2) )
 # 1396 "parser.ml"
                : 'd))
@@ -1399,7 +1399,7 @@ let yyact = [|
     let _4 = (Parsing.peek_val __caml_parser_env 4 : 'parametre) in
     let _7 = (Parsing.peek_val __caml_parser_env 1 : string) in
     Obj.repr(
-# 142 "parser.mly"
+# 144 "parser.mly"
                                                     ( Function(_2,_4,_7) )
 # 1405 "parser.ml"
                : 'd))
@@ -1407,7 +1407,7 @@ let yyact = [|
     let _2 = (Parsing.peek_val __caml_parser_env 3 : string) in
     let _4 = (Parsing.peek_val __caml_parser_env 1 : string) in
     Obj.repr(
-# 143 "parser.mly"
+# 145 "parser.mly"
                                 ( Function(_2,_4) )
 # 1413 "parser.ml"
                : 'd))
@@ -1418,7 +1418,7 @@ let yyact = [|
     let _9 = (Parsing.peek_val __caml_parser_env 2 : 'i_list) in
     let _10 = (Parsing.peek_val __caml_parser_env 1 : 'end_function) in
     Obj.repr(
-# 144 "parser.mly"
+# 147 "parser.mly"
                                                                                ( DefProcedure(_2,_4,_7,_9,_10) )
 # 1424 "parser.ml"
                : 'd))
@@ -1428,7 +1428,7 @@ let yyact = [|
     let _6 = (Parsing.peek_val __caml_parser_env 2 : 'i_list) in
     let _7 = (Parsing.peek_val __caml_parser_env 1 : 'end_function) in
     Obj.repr(
-# 145 "parser.mly"
+# 148 "parser.mly"
                                                            ( DefProcedure(_2,_4,_6,_7) )
 # 1434 "parser.ml"
                : 'd))
@@ -1440,7 +1440,7 @@ let yyact = [|
     let _11 = (Parsing.peek_val __caml_parser_env 2 : 'i_list) in
     let _12 = (Parsing.peek_val __caml_parser_env 1 : 'end_function) in
     Obj.repr(
-# 146 "parser.mly"
+# 150 "parser.mly"
                                                                                         ( Function(_2,_4,_7,_9,_11,_12) )
 # 1446 "parser.ml"
                : 'd))
@@ -1451,7 +1451,7 @@ let yyact = [|
     let _8 = (Parsing.peek_val __caml_parser_env 2 : 'i_list) in
     let _9 = (Parsing.peek_val __caml_parser_env 1 : 'end_function) in
     Obj.repr(
-# 147 "parser.mly"
+# 151 "parser.mly"
                                                                     ( Function(_2,_4,_6,_8,_9) )
 # 1457 "parser.ml"
                : 'd))
