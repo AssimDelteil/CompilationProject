@@ -64,7 +64,7 @@ type instr =
     .., soit d’un type" *)
     |For of (string option)*(string option)*string*(string option)*for_range*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
-    |If of (string option)*expr*(instr list)* ((expr*(instr list)) list)
+    |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
     |Case of (string option)*expr*( ((case_choix list)*(instr list)) list) 
     |Goto of (string option)*string
@@ -579,3 +579,12 @@ let aff_file f =
         print_sep (["|\n"]); 
         aff_instr_list [""] i_list;
         print_string "End Of File\n"
+
+let print_consts f = 
+match f with 
+|(_,d_list,i_list)-> print_string ""
+
+let check_affect f = true 
+
+let check_scope f = true
+
