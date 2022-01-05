@@ -66,8 +66,8 @@ e_list:
 
 
 choix_for:
-    |ID { Range($1) }
-    |e PP e { Expr($1,$3) }
+    |ID { ForRange($1) }
+    |e PP e { ForExpr($1,$3) }
 
 else_elsif:
     |ELSE i_list {$2} 
