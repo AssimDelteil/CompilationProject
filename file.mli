@@ -59,10 +59,10 @@ type instr =
     (*B = Boucle*)
     |Loop of (string option)*(string option)*(instr list)*(string option)
     |While of (string option)*(string option)*expr*(instr list)*(string option)
-    (*3ème string option pour le reverse
+    (*bool pour le reverse (si true: alors reverse)
     Utilise bPT_... pour représenter "soit de deux expressions séparées par
     .., soit d’un type" *)
-    |For of (string option)*(string option)*string*(string option)*for_range*(instr list)*(string option)
+    |For of (string option)*(string option)*bool*(string option)*for_range*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
     |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
