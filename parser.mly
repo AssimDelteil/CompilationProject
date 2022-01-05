@@ -37,7 +37,7 @@ e:
     |e FOIS e { Fois($1,$3) }
     |e MOINS e { Moins($1,$3) }
     |e DIV e { Div($1,$3) }
-    |LPAR e RPAR { Paren($2) }
+    |LPAR e RPAR { $2 }
     |e PUISS e { Puiss($1,$3) }
     |e EQ e { Eq($1,$3) }
     |e NEQ e { Neq($1,$3) }
