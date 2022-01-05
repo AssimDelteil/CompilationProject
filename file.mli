@@ -64,7 +64,7 @@ type instr =
     .., soit d’un type" *)
     |For of (string option)*(string option)*string*(string option)*for_range*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
-    |If of (string option)*expr*(instr list)* ((expr*(instr list)) list)
+    |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
     |Case of (string option)*expr*( ((case_choix list)*(instr list)) list) 
     |Goto of (string option)*string
@@ -102,4 +102,20 @@ type decla =
 type file =
     |File of string*(decla list)*(instr list)
 
+(*@requires nothing
+@ensures print ast of file*)
 val aff_file : file -> unit
+
+(*@requires nothing
+@ensures print constant of ast*)
+val print_consts : file -> unit 
+
+(*@requires nothing
+@ensures return true if affectations are correct
+@raises Not_correct(str) with str containing information on why the affect is not correct*)
+val check_affect : file -> bool 
+
+(*@requires nothing
+@ensures return true if scopes are correct
+@raises Not_correct(str) with str containing information on why there is a probleme with scope*)
+val check_scope : file -> bool 
