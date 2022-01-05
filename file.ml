@@ -100,7 +100,7 @@ type decla =
     |DefFunction of string * parametre_list option * string * (decla list) * instr list * (string option)
 
 type file =
-    |File of (decla list)*(instr list)
+    |File of string*(decla list)*(instr list)
     
 
 let print_etiquette eti = 
@@ -571,8 +571,10 @@ let aff_file f =
     in 
 
     match f with
-    |File(d_list, i_list)-> 
+    |File(id,d_list, i_list)-> 
         print_string "File\n";
+        aff_expr [""] (Id(id));
+        print_sep (["|\n"]);
         aff_delc_list [""] d_list ;
         print_sep (["|\n"]); 
         aff_instr_list [""] i_list;
