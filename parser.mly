@@ -2,7 +2,7 @@
   open File
 %}
 /*Token terminaux sans type*/
-%token MOD REM AND OR XOR ABS NOT THEN ELSE LOOP END WHILE FOR REVERSE IN IF ELSIF ELSE CASE WHEN OTHERS GOTO EXIT RETURN RANGE INTEGER BOOLEAN CONSTANT TYPE IS SUBTYPE RENAMES PROCEDURE OUT FUNCTION BEGIN NULL NEQ LESSE DEB_ETIQ FIN_ETIQ PUISS GREATE AFFECT FLECHE PP COMM PLUS MOINS DIV FOIS EQ LESST GREATT LPAR RPAR VIR PVIR P DP SEP EOL
+%token MOD REM AND OR XOR ABS NOT THEN ELSE LOOP END WHILE FOR REVERSE IN IF ELSIF ELSE CASE WHEN OTHERS GOTO EXIT RETURN RANGE INTEGER BOOLEAN CONSTANT TYPE IS SUBTYPE RENAMES PROCEDURE OUT FUNCTION BEGIN NULL NEQ LESSE DEB_ETIQ FIN_ETIQ PUISS GREATE AFFECT FLECHE PP COMMENTAIRE PLUS MOINS DIV FOIS EQ LESST GREATT LPAR RPAR VIR PVIR P DP SEP EOL
 %token <float> CST_FLOAT
 %token <int> CST_INT
 %token <string> ID
@@ -10,7 +10,7 @@
 %type <File.file> s
 
 
-%left LOOP END WHILE FOR REVERSE IF ELSIF WHEN OTHERS GOTO EXIT RETURN RANGE INTEGER BOOLEAN CONSTANT TYPE IS SUBTYPE RENAMES PROCEDURE OUT FUNCTION NULL DEB_ETIQ FIN_ETIQ AFFECT PP COMM LPAR RPAR VIR P DP SEP EOL
+%left LOOP END WHILE FOR REVERSE IF ELSIF WHEN OTHERS GOTO EXIT RETURN RANGE INTEGER BOOLEAN CONSTANT TYPE IS SUBTYPE RENAMES PROCEDURE OUT FUNCTION NULL DEB_ETIQ FIN_ETIQ AFFECT PP COMMENTAIRE LPAR RPAR VIR P DP SEP EOL
 %left AND OR XOR AND THEN OR ELSE
 %left EQ NEQ LESSE LESST GREATE GREATT
 %left PLUS MOINS PVIR 
@@ -24,12 +24,14 @@
 
 s: PROCEDURE ID IS d_list BEGIN i_list EOL {File($2,$4,$6)}
 
+
 i_list:
   |i {[$1]}
   |i i_list{$1::$2}
 
 d_list:
-  |d {[$1]}
+  | {None}
+  |d {Some([$1])}
   |d d_list{$1::$2}
 
 e:
@@ -95,16 +97,16 @@ case_ligne_list:
 i:
     |DEB_ETIQ ID FIN_ETIQ NULL PVIR { NullInstr(Some($2)) }
     |DEB_ETIQ ID FIN_ETIQ ID AFFECT e PVIR { Affect(Some($2),$4,$6) }
-    |DEB_ETIQ ID FIN_ETIQ ID e_list PVIR { AppelsProc(Some($2),$4,$5) }
+    |DEB_ETIQ ID FIN_ETIQ ID e_list PVIR { AppelProc(Some($2),$4,$5) }
     |DEB_ETIQ ID FIN_ETIQ ID LOOP i_list END LOOP ID PVIR { Loop(Some($2),Some($4),$6,Some($9)) }
     |DEB_ETIQ ID FIN_ETIQ ID WHILE e LOOP i_list END LOOP ID PVIR { While(Some($2),Some($4),$6,$8,Some($11)) }
-    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,False,$9,$11,Some($14)) }
-    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,False,$8,$10,Some($13)) }
+    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN REVERSE choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,true,$9,$11,Some($14)) }
+    |DEB_ETIQ ID FIN_ETIQ ID FOR ID IN choix_for LOOP i_list END LOOP ID PVIR { For(Some($2),Some($4),$6,false,$8,$10,Some($13)) }
 
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list END IF PVIR { If(Some($2),$5,$7,$8,None) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,Some($9)) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,$8,Some($10)) }
-    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list END IF PVIR { If(Some($2),$5,$7,None) }
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list END IF PVIR { If(Some($2),$5,$7,Some($8),None) }
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,None,Some($9)) }
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list elsif_list ELSE i_list END IF PVIR { If(Some($2),$5,$7,Some($8),Some($10)) }
+    |DEB_ETIQ ID FIN_ETIQ IF e THEN i_list END IF PVIR { If(Some($2),$5,$7,None,None) }
 
 
     |DEB_ETIQ ID FIN_ETIQ CASE e IS case_ligne_list END CASE PVIR { Case(Some($2),$5,$7) }
@@ -114,25 +116,26 @@ i:
     |DEB_ETIQ ID FIN_ETIQ RETURN PVIR { ReturnProc(Some($2)) }
     |DEB_ETIQ ID FIN_ETIQ RETURN e PVIR {ReturnFct(Some($2),$5) }
 
+
 id_list:
   |ID { Fin($1) }
   |ID VIR id_list { List($1,$3) }
 
 obj_choix:
-  |DP CONSTANT ID { ($3) }
-  |DP CONSTANT {}
-  |DP ID { ($2) }
-  |DP {}
+  |DP CONSTANT ID { (Some($3)) }
+  |DP CONSTANT {None}
+  |DP ID { Some($2) }
+  |DP {None}
 
 mode:
-    | { Null() }
-    |IN { In() }
-    |OUT { Out() }
-    |IN OUT { In_Out() }
+    | { Null }
+    |IN { In }
+    |OUT { Out }
+    |IN OUT { In_out }
 
 parametre:
-  |id_list DP mode ID { Fin($1,$3,$4) }
-  |id_list DP mode ID PVIR parametre { Par($1,$3,$4,$6) }
+  |id_list DP mode ID { LastPara($1,$3,$4) }
+  |id_list DP mode ID PVIR parametre { ParaList($1,$3,$4,$6) }
 
 end_function:
   |END {None}
@@ -141,7 +144,7 @@ end_function:
 
 d:
     |id_list obj_choix AFFECT e PVIR { Objet($1,$2,Some($4)) }
-    |id_list obj_choix PVIR { Objet($1,None,$2) }
+    |id_list obj_choix PVIR { Objet($1,$2,None) }
     |TYPE ID IS RANGE e PP e PVIR { Type($2,$5,$7) }
     |SUBTYPE ID IS ID RANGE e PP e PVIR { Sous_type($2,$4,$6,$8) }
     |id_list DP ID RENAMES ID PVIR { Rename($1,$3,$5) }
@@ -150,13 +153,14 @@ d:
     |PROCEDURE ID PVIR { Procedure($2,None) }
 
     |FUNCTION ID LPAR parametre RPAR RETURN ID PVIR { Function($2,Some($4),$7) }
-    |FUNCTION ID RETURN ID PVIR { Function($2,,None,$4) }
+    |FUNCTION ID RETURN ID PVIR { Function($2,None,$4) }
 
     |PROCEDURE ID LPAR parametre RPAR IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,Some($4),$7,$9,$10) }
     |PROCEDURE ID IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,None,$4,$6,$7) }
 
     |FUNCTION ID LPAR parametre RPAR RETURN ID IS d_list BEGIN i_list end_function PVIR { DefFunction($2,Some($4),$7,$9,$11,$12) }
     |FUNCTION ID RETURN ID IS d_list BEGIN i_list end_function PVIR { DefFunction($2,None,$4,$6,$8,$9) }
+
 
 
 
