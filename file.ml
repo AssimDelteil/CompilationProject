@@ -62,7 +62,7 @@ type instr =
     (*bool pour le reverse (si true: alors reverse)
     Utilise bPT_... pour représenter "soit de deux expressions séparées par
     .., soit d’un type" *)
-    |For of (string option)*(string option)*bool*(string option)*for_range*(instr list)*(string option)
+    |For of (string option)*(string option)*string*bool*for_range*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
     |If of (string option)*expr*(instr list)* ((expr*(instr list)) list) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
@@ -383,7 +383,7 @@ and aff_instr l i =
         aff_expr l (Id(id));
         print_sep (l @ ["|\n"]);
         print_sep_spec l;
-        Printf.printf "reverse : %b\n" bool_rev_option
+        Printf.printf "reverse : %b\n" bool_rev_option;
         print_sep (l @ ["|\n"]);
         print_for_range l range_for;
         print_sep (l @ ["|\n"]);
@@ -621,8 +621,17 @@ let print_consts f = Printf.printf ""
                 print_consts_expr e;
                 print_consts_instr_list i_list;
                 print_consts_elif_list elif_list'
-        in 
-        match i with
+        in let print_consts_case_list case_list=
+            let print_consts_case_choix_list case_choix_list = 
+                match case_choix_list with
+                |[] -> Printf.printf "" 
+                |Expr(e)::ccl' -> 
+
+            match case_list with
+            |[]->Printf.printf "" 
+            |(case_choix_list,i_list)::case_list'->
+
+        match i with 
         |NullInstr(eti) -> Printf.printf "" 
         |Affect(eti, id, e) -> print_consts_expr e
         |AppelProc(eti,id,e_list) -> print_consts_expr_list l e_list
@@ -642,14 +651,11 @@ let print_consts f = Printf.printf ""
             print_consts_instr_list i_list;
             print_consts_elif_list elif_list;
             (match option_else with 
-            |)
+            |None->Printf.printf "" 
+            |Some(else_i_list)-> print_consts_instr_list else_i_list)
         |Case(eti,e,case_list) ->
-            print_etiquette eti;
-            print_string "Case\n";
-            print_sep (l @ ["|\n"]);
-            aff_expr l e;
-            print_sep (l @ ["|\n"]);
-            aff_case_list l case_list
+            print_consts_expr e;
+            case_list
         |Goto(eti,id) ->
             print_etiquette eti;
             print_string "Goto\n";
@@ -682,7 +688,7 @@ let print_consts f = Printf.printf ""
             print_etiquette eti;
             print_string "AppelProc\n";
             print_sep (l @ ["|\n"]);
-            aff_expr l e *)
+            aff_expr l e*)
 
 let check_affect f = true 
 
