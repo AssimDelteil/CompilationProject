@@ -22,7 +22,7 @@
 
 %%
 
-s:s_prime
+s:s_prime {$1}
 
 s_prime: 
     |PROCEDURE ID IS d_list BEGIN i_list EOL {File($2,Some($4),$6)}
