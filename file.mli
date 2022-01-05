@@ -54,7 +54,7 @@ type instr =
     d’un identifiant entre << et >>, suivie de :"
     A chaque fois que besoin de identifiant: met string *)
     |NullInstr of (string option)
-    |Affect of (string option)*string*expr
+    |Affect of (string option)*string*expr²
     |AppelProc of (string option)*string*(expr list) (*Procédure d'appel*)
     (*B = Boucle*)
     |Loop of (string option)*(string option)*(instr list)*(string option)
@@ -103,6 +103,9 @@ type decla =
 type file =
     |File of string*(decla list) option*(instr list)
 
+exception Affect_Not_Correct of string list * instr list
+
+val aff_instr_list : string list -> instr list -> unit  
 (*@requires nothing
 @ensures print ast of file*)
 val aff_file : file -> unit

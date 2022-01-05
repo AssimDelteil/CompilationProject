@@ -102,6 +102,8 @@ type decla =
 (*Fichier est une procédure: contient nom de la procédure, des déclarations optionnelles et des instructions*)
 type file =
     |File of string*(decla list) option*(instr list)
+
+exception Affect_Not_Correct of string list * instr list
     
 
 let print_etiquette eti = 
@@ -731,15 +733,75 @@ let print_consts f =
         print_consts_decla_list d_list;
         print_consts_instr_list i_list)
     
-let check_affect f = true
-    (*let 
+let check_affect f = 
+    (*get_forbiden_decla_list forbiden i_list -> check i_list with forbiden_list*)
+    let rec get_forbiden_decla_list forbiden_list d_list =
+        let rec add_nn_str_list nn_str_list forbiden_list = 
+            match nn_str_list with 
+            |Fin(str) -> str::forbiden_list
+            |List(str,nnsl) -> add_nn_str_list nnsl (str::forbiden_list)
+        in
+        let rec update_forbiden list_forbiden param_opt =
+            match param_opt with 
+            |None->list_forbiden
+            |Some(param_list)->     
+                match param_list with 
+                |LastPara(nnsl, m, _)-> 
+                    (match m with 
+                    |Out|In_out -> add_nn_str_list nnsl list_forbiden
+                    |_ -> list_forbiden)
+                |ParaList(nnsl,m,_,plist)->
+                    (match m with 
+                    |Out|In_out -> 
+                        let lf = add_nn_str_list nnsl list_forbiden in
+                        update_forbiden lf (Some(plist))
+                    |_ -> update_forbiden list_forbiden (Some(plist))  
+                    )
+        in 
+        match d_list with 
+        |[]-> forbiden_list
+        |d::d_list'->
+            match d with 
+            |Objet(nn_str_list, str_option, _)->
+                (match str_option with 
+                |None -> get_forbiden_decla_list forbiden_list d_list'
+                |Some(_) -> 
+                    let forbiden' = add_nn_str_list nn_str_list forbiden_list in
+                    get_forbiden_decla_list forbiden' d_list')
+            |DefProcedure(_, param_opt, d_list'', i_list, _) ->
+                let lf = update_forbiden forbiden_list param_opt in 
+                let lf' = get_forbiden_decla_list lf d_list'' in 
+                if check_affect_instr_list lf' i_list
+                then lf'
+                else assert false (*if false, execption already raised *)
+            |DefFunction(_, param_opt, _, d_list'', i_list, _) ->
+                let lf = update_forbiden forbiden_list param_opt in 
+                let lf' = get_forbiden_decla_list lf d_list'' in 
+                if check_affect_instr_list lf' i_list
+                then lf'
+                else assert false (*if false, execption already raised *)
+            |_-> forbiden_list
+    
+    
+    and check_affect_instr_list forbiden_list i_list= 
+        match i_list with 
+        |[]->true
+        |i::i_list' -> 
+            (match i with 
+            |Affect(_, id, _)-> 
+                if List.mem id forbiden_list
+                then raise (Affect_Not_Correct (forbiden_list,[i]))
+                else true&&(check_affect_instr_list forbiden_list i_list')
+            |_ -> check_affect_instr_list forbiden_list i_list')
 
+    in
     match f with 
     |File(id, d_list_opt, i_list)->
-        (match d_list_opt with ->
-        |None -> check_affect_instr_list i_list
-        |Some(d_list) -> check_affect_decla_list d_list;
-            check_affect_instr_list i_list)*)
+        (match d_list_opt with
+        |None -> check_affect_instr_list [] i_list
+        |Some(d_list) -> 
+            let forbiden = get_forbiden_decla_list [] d_list in
+            check_affect_instr_list forbiden i_list)
 
 let check_scope f = true
 

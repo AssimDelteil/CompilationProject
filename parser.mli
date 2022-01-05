@@ -44,7 +44,7 @@ type token =
   | AFFECT
   | FLECHE
   | PP
-  | COMMENTAIRE
+  | COMMENT
   | PLUS
   | MOINS
   | DIV
@@ -60,7 +60,6 @@ type token =
   | DP
   | SEP
   | EOF
-  | EOL
   | CST_FLOAT of (float)
   | CST_INT of (int)
   | ID of (string)
