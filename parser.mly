@@ -22,7 +22,7 @@
 
 %%
 
-s: PROCEDURE ID IS d_list BEGIN i_list EOL {$4}
+s: PROCEDURE ID IS d_list BEGIN i_list EOL {File($2,$4,$6)}
 
 i_list:
   |i {[$1]}
@@ -37,7 +37,7 @@ e:
     |e FOIS e { Fois($1,$3) }
     |e MOINS e { Moins($1,$3) }
     |e DIV e { Div($1,$3) }
-    |LPAR e RPAR { Paren($2) }
+    |LPAR e RPAR { $2 }
     |e PUISS e { Puiss($1,$3) }
     |e EQ e { Eq($1,$3) }
     |e NEQ e { Neq($1,$3) }
@@ -66,12 +66,12 @@ e_list:
 
 
 choix_for:
-    |ID { Range($1) }
-    |e PP e { Expr($1,$3) }
+    |ID { ForRange($1) }
+    |e PP e { ForExpr($1,$3) }
 
 else_elsif:
     |ELSE i_list {$2} 
-    |ELSIF e THEN i_list else_elsif { [If($2,$4,$5)] }
+    |ELSIF e THEN i_list else_elsif { [If("",$2,$4,$5,)] }
 
 case_choix:
     |e { Expr($1) }
@@ -137,12 +137,16 @@ d:
     |TYPE ID IS RANGE e PP e PVIR { Type($2,$5,$7) }
     |SUBTYPE ID IS ID RANGE e PP e PVIR { Sous_type($2,$4,$6,$8) }
     |id_list DP ID RENAMES ID PVIR { Rename($1,$3,$5) }
+
     |PROCEDURE ID LPAR parametre RPAR PVIR { Procedure($2,$4) }
     |PROCEDURE ID PVIR { Procedure($2) }
+
     |FUNCTION ID LPAR parametre RPAR RETURN ID PVIR { Function($2,$4,$7) }
     |FUNCTION ID RETURN ID PVIR { Function($2,$4) }
+
     |PROCEDURE ID LPAR parametre RPAR IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,$4,$7,$9,$10) }
     |PROCEDURE ID IS d_list BEGIN i_list end_function PVIR { DefProcedure($2,$4,$6,$7) }
+
     |FUNCTION ID LPAR parametre RPAR RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$7,$9,$11,$12) }
     |FUNCTION ID RETURN ID IS d_list BEGIN i_list end_function PVIR { Function($2,$4,$6,$8,$9) }
 
