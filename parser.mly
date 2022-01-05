@@ -22,7 +22,7 @@
 
 %%
 
-s: PROCEDURE ID IS d_list BEGIN i_list EOL {$4}
+s: PROCEDURE ID IS d_list BEGIN i_list EOL {File($2,$4,$6)}
 
 i_list:
   |i {[$1]}
