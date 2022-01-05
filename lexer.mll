@@ -50,7 +50,6 @@ rule decoupe = parse
   |":=" {AFFECT}  
   |"=>" {FLECHE}
   |".." {PP}
-  |"--" {COMM}
   |'+' {PLUS}
   |'-' {MOINS}
   |'/' {DIV}
@@ -66,6 +65,7 @@ rule decoupe = parse
   |':' {DP} 
   |'|' {SEP}
   |'\n' {EOL}
+  |eof {EOF}
   |[' ''\t']+ {decoupe lexbuf}
   |['0'-'9']+ as i {CST_INT (int_of_string i)}
   |['0'-'9']+('.'['0'-'9']+)?(['e''E']['0'-'9']+)? as f {CST_FLOAT (float_of_string f)}
