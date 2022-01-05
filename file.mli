@@ -120,3 +120,9 @@ val check_affect : file -> bool
 @ensures return true if scopes are correct
 @raises Not_correct(str) with str containing information on why there is a probleme with scope*)
 val check_scope : file -> bool 
+
+(*@requires nothing
+@ensures return true if check_scope and check_affect returns true 
+    And prints all constant in the file
+@raises Not_correct(str) with str containing information on why there is a probleme with scope or affect*)
+val print_conts_and_check : file -> bool

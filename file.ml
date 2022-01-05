@@ -731,7 +731,16 @@ let print_consts f =
         print_consts_decla_list d_list;
         print_consts_instr_list i_list)
     
-let check_affect f = true 
+let check_affect f = true
+    (*let 
+
+    match f with 
+    |File(id, d_list_opt, i_list)->
+        (match d_list_opt with ->
+        |None -> check_affect_instr_list i_list
+        |Some(d_list) -> check_affect_decla_list d_list;
+            check_affect_instr_list i_list)*)
 
 let check_scope f = true
 
+let print_conts_and_check f = true
