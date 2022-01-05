@@ -60,9 +60,9 @@ type token =
   | DP
   | SEP
   | EOL
-  | CST_INT of (int)
   | CST_FLOAT of (float)
+  | CST_INT of (int)
   | ID of (string)
 
 val s :
-  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> File.ast
+  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> File.file

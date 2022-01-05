@@ -24,13 +24,9 @@
 
 s: PROCEDURE ID IS d_list BEGIN i_list EOL {$4}
 
-<<<<<<< HEAD
-s: d_list i_list EOL {$1}
-=======
 i_list:
   |i {[$1]}
   |i i_list{$1::$2}
->>>>>>> 68c86a906ae9bfe2bcd84178584948af0e3fb191
 
 d_list:
   |d {[$1]}
@@ -62,7 +58,7 @@ e:
     |CST_INT { Int($1) }
     |CST_FLOAT { Float($1) }
     |ID { Id($1) }
-    |ID LPAR e_list RPAR { ConvouAppelFct($1,$3) }
+    |ID LPAR e_list RPAR { ConvOuAppelFct($1,$3) }
 
 e_list:
   |e {[$1]}
