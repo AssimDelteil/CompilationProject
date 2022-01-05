@@ -1,4 +1,4 @@
-all: usage
+all: test_parser
 
 %.cmi: %.mli
 	ocamlc -c $<
@@ -19,9 +19,6 @@ parser.cmi: parser.mli file.cmo
 
 test_parser: file.cmo parser.cmo lexer.cmo test_parser.cmo
 	ocamlc -o $@ $^
-
-usage:
-	@echo "Taper make test_decoupe ou make test_parser"
 	
 clean:
 	-rm lexer.ml parser.ml parser.mli *.cmo *.cmi test_parser

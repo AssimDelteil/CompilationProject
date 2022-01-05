@@ -1,33 +1,3 @@
-type ast =
-    |Plus of ast*ast
-    |Moins of ast*ast
-    |Fois of ast*ast
-    |Div of ast*ast
-    |Puiss of ast*ast
-    |Eq of ast*ast
-    |Neq of ast*ast
-    |LessE of ast*ast
-    |LessT of ast*ast
-    |GreatE of ast*ast
-    |GreatT of ast*ast
-    |Mod of ast*ast
-    |Rem of ast*ast
-    |And of ast*ast
-    |Or of ast*ast
-    |Xor of ast*ast
-    |AndThen of ast*ast
-    |OrElse of ast*ast
-    |Not of ast
-    |Abs of ast 
-    |Nega of ast
-    |Int of int
-    |Float of float
-    |Id of string 
-
-val affiche : ast -> unit
-
-
-
 (*Type expression demandé*)
 type expr = 
     |Plus of expr*expr
@@ -48,7 +18,8 @@ type expr =
     |Xor of expr*expr
 
     |Id of string 
-    |Cst of ada_type 
+    |Int of int 
+    |Float of float 
 
     |Nega of expr
     |Abs of expr
@@ -58,7 +29,6 @@ type expr =
     |OrElse of expr*expr
 
     |ConvOuAppelFct of string*(expr list) 
-    |Paren of expr
 
 type range = int list
 
@@ -66,8 +36,8 @@ type range = int list
 Représente "soit de deux expressions séparées par
 .., soit d’un type" *)
 type for_range =
-    |Range of range
-    |Expr of expr*expr
+    |ForRange of range
+    |ForExpr of expr*expr
 
 (* Utilisé par Case  
 "Chaque choix est soit une expression, 
@@ -83,7 +53,7 @@ type instr =
     "Une instr est une séquence potentiellement vide d’étiquettes constituées chacune
     d’un identifiant entre << et >>, suivie de :"
     A chaque fois que besoin de identifiant: met string *)
-    |Null of (string option)
+    |NullInstr of (string option)
     |Affect of (string option)*string*expr
     |AppelProc of (string option)*string*(expr list) (*Procédure d'appel*)
     (*B = Boucle*)
@@ -132,4 +102,4 @@ type decla =
 type file =
     |File of (decla list)*(instr list)
 
-val affiche_file : file -> unit
+val aff_file : file -> unit
