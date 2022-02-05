@@ -9,4 +9,4 @@ After that, if you want, for example, to see the result on TRIVIAL.ADA run the c
 
 All the files on the "examples" were tested.
 
-This project was done in january 2022 by Assim DELTEIL and Simon OMNÈS.
+This project was done in january 2022 by Assim DELTEIL and Simon OMNES.
