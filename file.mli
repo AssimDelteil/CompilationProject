@@ -20,6 +20,7 @@ type expr =
     |Id of string 
     |Int of int 
     |Float of float 
+    |Str of string
 
     |Nega of expr
     |Abs of expr
@@ -31,13 +32,6 @@ type expr =
     |ConvOuAppelFct of string*(expr list) 
 
 type range = int list
-
-(*Utilisé par For 
-Représente "soit de deux expressions séparées par
-.., soit d’un type" *)
-type for_range =
-    |ForRange of string
-    |ForExpr of expr*expr
 
 (* Utilisé par Case  
 "Chaque choix est soit une expression, 
@@ -54,7 +48,7 @@ type instr =
     d’un identifiant entre << et >>, suivie de :"
     A chaque fois que besoin de identifiant: met string *)
     |NullInstr of (string option)
-    |Affect of (string option)*string*expr
+    |Affect of (string option)*string*expr 
     |AppelProc of (string option)*string*(expr list) option(*Procédure d'appel*)
     (*B = Boucle*)
     |Loop of (string option)*(string option)*(instr list)*(string option)
@@ -62,7 +56,7 @@ type instr =
     (*bool pour le reverse (si true: alors reverse)
     Utilise bPT_... pour représenter "soit de deux expressions séparées par
     .., soit d’un type" *)
-    |For of (string option)*(string option)*string*bool*for_range*(instr list)*(string option)
+    |For of (string option)*(string option)*string*bool*expr*expr*(instr list)*(string option)
     (*4ème terme pour les elif, 5ème pour le else*)
     |If of (string option)*expr*(instr list)* (((expr*(instr list)) list) option) *((instr list) option)
     (*3ème terme est liste d'alternative, composée de liste de choix et d'instrs*)
@@ -89,16 +83,15 @@ type parametre_list =
     |ParaList of notnull_string_list * mode * string * parametre_list
 
 type decla =
-    |Objet of notnull_string_list * string option * (expr option) 
+    |Objet of string * bool * (string option) * (expr option)
     |Type of string * expr * expr 
     |Sous_type of string * string * expr * expr
-    |Rename of notnull_string_list * string * string
+    |Rename of string * string * string
     |Procedure of string * parametre_list option
     |Function of string * parametre_list option * string
 (*Procedure et Function désigne les spécifications comme on les trouverait dans une interface. Les définitions correspondantes sont les suivantes*)
-    |DefProcedure of string * parametre_list option * (decla list) * instr list * (string option)
-    |DefFunction of string * parametre_list option * string * (decla list) * instr list * (string option)
-
+    |DefProcedure of string * parametre_list option * (decla list) option * instr list * string 
+    |DefFunction of string * parametre_list option * string * (decla list) option * instr list * string
 (*Fichier est une procédure: contient nom de la procédure, des déclarations optionnelles et des instructions*)
 type file =
     |File of string*(decla list) option*(instr list)
@@ -109,6 +102,10 @@ val aff_instr_list : string list -> instr list -> unit
 (*@requires nothing
 @ensures print ast of file*)
 val aff_file : file -> unit
+
+(*
+
+Unused functions about printing constants and checking scopes
 
 (*@requires nothing
 @ensures print constant of ast*)
@@ -129,3 +126,4 @@ val check_scope : file -> bool
     And prints all constant in the file
 @raises Not_correct(str) with str containing information on why there is a probleme with scope or affect*)
 val print_conts_and_check : file -> bool
+*)
